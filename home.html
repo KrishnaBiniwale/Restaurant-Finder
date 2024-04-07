@@ -223,6 +223,7 @@
 					return response.json();
 				})
 				.then(result => {
+					removeAll();
 					displayRestaurants(result);
 				})
 				.catch(error => {
@@ -244,10 +245,60 @@
 
 			console.log(result);
 			restaurants.forEach(function (restaurant) {
-				//console.log(restaurant);
+
+				let row = document.createElement("div");
+				row.classList.add("row", "restaurant", "justify-content-center", "border", "border-primary", "lightblue");
+				let col1 = document.createElement("div");
+				col1.classList.add("col-lg-3", "col-md-4", "col-12");
+
+				let img = document.createElement("img");
+				img.src = restaurant["image_url"];
+				img.onerror = function () {
+					img.src = "https://content.mycutegraphics.com/graphics/movie/movie-clapper-board-blank.png";
+					img.alt = "blank movie";
+				};
+				img.alt = restaurant["name"];
+				col1.appendChild(img);
+
+				let col2 = document.createElement("div");
+				col2.classList.add("col-lg-9", "col-md-8", "col-12");
+
+				let name = document.createElement("h4");
+				name.classList.add("text-center", "underline", "mt-3");
+				name.innerHTML = restaurant["name"];
+				col2.appendChild(name);
+
+				let rating = document.createElement("h5");
+				rating.classList.add("normal", "mt-4");
+				rating.innerHTML = "Rating: " + restaurant["rating"];
+				col2.appendChild(rating);
+
+				let reviewCount = document.createElement("h5");
+				reviewCount.classList.add("normal", "mt-4");
+				reviewCount.innerHTML = "Review Count: " + restaurant["review_count"];
+				col2.appendChild(reviewCount);
+
+				let price = document.createElement("h5");
+				price.classList.add("normal", "mt-4");
+				price.innerHTML = restaurant["price"];
+				col2.appendChild(price);
+
+				row.appendChild(col1);
+				row.appendChild(col2);
+
+				let searchResults = document.getElementById("search-results");
+				searchResults.appendChild(row);
 			});
 		}
 
+
+		function removeAll() {
+
+			var restaurants = document.querySelectorAll('.restaurant');
+			for (var i = 0; i < restaurants.length; i++) {
+				restaurants[i].parentNode.removeChild(restaurants[i]);
+			}
+		}
 
 		// Toggle details for restaurant images
 		$(document).on('click', '.restaurant-img img', function () {
