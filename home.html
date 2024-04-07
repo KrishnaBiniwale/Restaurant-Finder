@@ -231,6 +231,8 @@
 				});
 
 			$(this).trigger("reset");
+			document.getElementById('restaurant-name').value = nameTerm;
+			document.activeElement.blur();
 		});
 
 		function displayRestaurants(result) {
@@ -243,25 +245,25 @@
 			document.getElementById("results").classList.remove("hidden");
 
 
-			console.log(result);
+			let row = document.createElement("div");
+			row.classList.add("row", "justify-content-center");
 			restaurants.forEach(function (restaurant) {
-
-				let row = document.createElement("div");
-				row.classList.add("row", "restaurant", "justify-content-center", "border", "border-primary", "lightblue");
+				let container = document.createElement("div");
+				container.classList.add("container-fluid", "restaurant");
 				let col1 = document.createElement("div");
-				col1.classList.add("col-lg-3", "col-md-4", "col-12");
+				col1.classList.add("col-lg-3", "col-12", "py-5");
 
 				let img = document.createElement("img");
+				img.classList.add("img-fluid");
 				img.src = restaurant["image_url"];
 				img.onerror = function () {
 					img.src = "https://content.mycutegraphics.com/graphics/movie/movie-clapper-board-blank.png";
-					img.alt = "blank movie";
 				};
 				img.alt = restaurant["name"];
 				col1.appendChild(img);
 
 				let col2 = document.createElement("div");
-				col2.classList.add("col-lg-9", "col-md-8", "col-12");
+				col2.classList.add("col-lg-3", "col-12");
 
 				let name = document.createElement("h4");
 				name.classList.add("text-center", "underline", "mt-3");
@@ -280,14 +282,21 @@
 
 				let price = document.createElement("h5");
 				price.classList.add("normal", "mt-4");
-				price.innerHTML = restaurant["price"];
+				price.innerHTML = "Price: " + restaurant["price"];
 				col2.appendChild(price);
 
-				row.appendChild(col1);
-				row.appendChild(col2);
+				container.appendChild(col1);
+				container.appendChild(col2);
 
-				let searchResults = document.getElementById("search-results");
-				searchResults.appendChild(row);
+				row.appendChild(container);
+
+				i++;
+				if (i % 2 == 0) {
+					let searchResults = document.getElementById("search-results");
+					searchResults.appendChild(row);
+					row = document.createElement("div");
+					row.classList.add("row", "justify-content-center");
+				}
 			});
 		}
 
@@ -442,7 +451,7 @@
 					alert("Reservation error");
 				}
 			});
-			$(this).trigger("reset");
+			//$(this).trigger("reset");
 		});
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
