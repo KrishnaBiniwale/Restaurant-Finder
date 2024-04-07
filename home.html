@@ -88,11 +88,11 @@
 					</div>
 					<div class="hidden">
 						<label>
-							<input type="number" id="latitude" name="latitude" placeholder="34.02116" min="-90" max="90"
+							<input type="number" id="latitude" name="latitude" value="34.02116" min="-90" max="90"
 								step="0.000000000000001">
 						</label>
 						<label>
-							<input type="number" id="longitude" name="longitude" placeholder="-118.287132" min="-180"
+							<input type="number" id="longitude" name="longitude" value="-118.287132" min="-180"
 								max="180" step="0.000000000000001">
 						</label>
 					</div>
@@ -111,7 +111,7 @@
 		}
 
 		function initMap() {
-			var map_position = new google.maps.LatLng(34.02116, -118.287132);
+			let map_position = new google.maps.LatLng(34.02116, -118.287132);
 
 			const myLatlng = { lat: 34.02116, lng: -118.287132 };
 			const map = new google.maps.Map(document.getElementById("map"), {
@@ -119,7 +119,7 @@
 				center: map_position,
 			});
 
-			var marker = new google.maps.Marker({
+			let marker = new google.maps.Marker({
 				position: map_position,
 				map: map
 			});
@@ -135,7 +135,7 @@
 				infoWindow = new google.maps.InfoWindow({
 					position: mapsMouseEvent.latLng,
 				});
-				var latlong = JSON.parse(JSON.stringify(mapsMouseEvent.latLng.toJSON(), null));
+				let latlong = JSON.parse(JSON.stringify(mapsMouseEvent.latLng.toJSON(), null));
 				//console.log(latlong['lat'] + ", " + latlong['lng']);
 				$('#map').hide();
 				document.getElementById('page').classList.remove("dim");
@@ -152,10 +152,10 @@
 
 	<script>
 		$(document).ready(function () {
-			initMap();
+			//initMap();
 			$('#map').hide();
 
-			// Update navbar based on login
+			// TODO: Update navbar based on login
 			/*if (sessionStorage.getItem('loggedIn') != 'true') {
 				$('#navbar-links').children(':not(#in, #home)').hide();
 				$('#navbar-links').children('#in').show();
@@ -163,241 +163,218 @@
 				$('#navbar-links').children('#in').hide();
 				$('#navbar-links').children(':not(#in)').show();
 			}*/
+		});
 
-			// Search for restaurant
-			$('#form').submit(function (e) {
-				e.preventDefault();
-				var formData = $(this).serialize();
+		// Search for restaurant
+		$('#form').submit(function (e) {
+			e.preventDefault();
+			$('#home-img').hide();
+			let formData = $(this).serialize();
 
-				var search = $('#form').find('#restaurant-name').val();
-				$('#home-img').hide();
+			let radioButtons = form.elements['search-parameter'];
+			for (let i = 0; i < radioButtons.length; i++) {
+				if (radioButtons[i].checked) {
+					selectedId = radioButtons[i].id;
+					break;
+				}
+			}
+			let sortTerm = selectedId.replace(/-/g, "_");
 
-				/*$.ajax({
-					type: "POST",
-					url: "Yelp",
-					data: formData,
-					success: function (response) {
-						$('.container').hide();
-						result = "<h1 id='search-term'>Results for \"" + search + "\"</h1><hr>";
-						restaurants = JSON.parse(response);
-	
-						restaurants["businesses"].forEach(function (item) {
-							result += "<div class=\"restaurant\"><div class=\"restaurant-img\">";
-							result += "<img src=\"" + item["image_url"] + "\" alt=Restaurant-Image></div><div class=\"restaurant-desc\">"
-	
-							result += "<h3>" + item["name"] + "</h3>";
-							result += "<p>" + item["location"]["display_address"].join(' ') + "</p>";
-							result += "<a class='url-link' href='" + item["url"].split('?')[0] + "'>" + item["url"].split('?')[0] + "</a>";
-	
-							result += "</div><div class='restaurant-details'>"
-	
-							var details = "";
-							details += "<p>Address: " + item["location"]["display_address"].join(' ') + "</p>";
-							details += "<p>Phone No. " + item["display_phone"] + "</p>";
-							details += "<p>Cuisine: " + item["categories"][0]["title"] + "</p>";
-							details += "<p>Price: " + item["price"] + "</p>";
-	
-							details += "<p>Rating: ";
-							var i;
-							for (i = 1; i <= item['rating']; i++) {
-								details += '<i class="fa fa-star"></i>';
-							}
-							if (item['rating'] - (i - 1) >= 0.5) {
-								details += '<i class="fa fa-star-half-o"></i>'
-							}
-							details += "</p>";
-	
-							result += details;
-							result += "</div></div>";
-	
-							// Favorites and reservation
-	
-							result += "<div class='add-to-favorites'>";
-							result += "<p><i class='fa fa-star'></i> Add to Favorites</p>";
-							result += "</div>";
-	
-							result += "<div class='add-to-reservations'>";
-							result += "<p>Add to Reservation</p></div>";
-							result += "<form class='reservation'>";
-							result += '<div class="reservation-options"><div class="date-and-time"><input type="date" class="dateInput" name="dateInput" placeholder="Date" required>';
-							result += '<input type="time" class="timeInput" name="timeInput" placeholder="Time" required></div>';
-							result += '<div class="wall-of-text"><textarea class="reservation-text" name="text" rows="6" cols="202" placeholder="Reservation Notes"></textarea></div>';
-							result += '<div class="submit-reservation"><input class="reservation-submit" type="submit" value="Submit Reservation"></div>';
-	
-							result += "</div></form></div><hr>";
-						});
-						$('#append').html(result);
-						$('.restaurant-details').hide();
-						$('.add-to-favorites').hide();
-						$('.add-to-reservations').hide();
-						$('.reservation').hide();
-						$('#navbar').css('padding-bottom', '1px');
-					},
-					error: function (error) {
-						alert("ERROR HERE");
+			let nameTerm = $('#form').find('#restaurant-name').val();
+			let latitudeTerm = $('#form').find('#latitude').val();
+			let longitudeTerm = $('#form').find('#longitude').val();
+
+
+			// Define search parameters
+			let params = {
+				latitude: latitudeTerm,
+				longitude: longitudeTerm,
+				term: nameTerm,
+				sort_by: sortTerm,
+				limit: 20
+			};
+			// Base URL of the search endpoint
+			let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
+
+			// Construct the query URL using object literals and template literals
+			let queryURL = `${baseURL}?${Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&')}`;
+			let apiKey = "KsGd36gXbL3rlu3rd-ivS-Tlev_TS4iilgg1DmoGmIYEyEAJYJiVlfH9U6NAxHdTPmS6TdaFk3Wd_dOSLV5QnIpwuG2NyiNngMPHETdidSLzw2TyCL_QKRqc5_Q6ZXYx";
+			console.log(queryURL);
+			fetch(queryURL, {
+				method: "GET",
+				headers: {
+					"accept": "application/json",
+					"x-requested-with": "xmlhttprequest",
+					"Access-Control-Allow-Origin": "*",
+					"Authorization": `Bearer ${apiKey}`
+				}
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
 					}
+					return response.json();
+				})
+				.then(result => {
+					displayRestaurants(result['businesses']);
+				})
+				.catch(error => {
+					console.error('There was a problem with the fetch operation:', error);
 				});
-				*/
-				$(this).trigger("reset");
+
+			$(this).trigger("reset");
+		});
+
+		function displayRestaurants(restaurants) {
+			restaurants.forEach(function (restaurant) {
+				console.log(restaurant.name);
 			});
-
-			$(document).on('click', '#search-term', function () {
-				if (typeof restaurantdiv !== 'undefined') {
-					restaurantdiv.children('.restaurant-desc').show();
-					restaurantdiv.children('.restaurant-details').hide();
-					$('.add-to-favorites').hide();
-					$('.add-to-reservations').hide();
-					$('.restaurant').not(restaurantdiv).show();
-					$('hr').not($('#search-term').next()).show();
-					$('#search-term').html(original_search);
-				}
-			});
+		}
 
 
-			// Toggle details for restaurant images
-			$(document).on('click', '.restaurant-img img', function () {
-				restaurantdiv = $(this).closest('.restaurant');
-				var toggled = restaurantdiv.children('.restaurant-details').is(':hidden');
-				if (toggled) {
-					$('.restaurant').not(restaurantdiv).hide();
-					$('hr').not($('#search-term').next(), $('#navbar-hr')).hide();
-					var index = 0;
-					for (index = 0; index < 10; index++) {
-						if (restaurants['businesses'][index]["name"].includes(restaurantdiv.children('.restaurant-desc').children('h3').text())) {
-							break;
-						}
+		// Toggle details for restaurant images
+		$(document).on('click', '.restaurant-img img', function () {
+			restaurantdiv = $(this).closest('.restaurant');
+			let toggled = restaurantdiv.children('.restaurant-details').is(':hidden');
+			if (toggled) {
+				$('.restaurant').not(restaurantdiv).hide();
+				$('hr').not($('#search-term').next(), $('#navbar-hr')).hide();
+				let index = 0;
+				for (index = 0; index < 10; index++) {
+					if (restaurants['businesses'][index]["name"].includes(restaurantdiv.children('.restaurant-desc').children('h3').text())) {
+						break;
 					}
+				}
 
-					restaurantdiv.children('.restaurant-desc').hide();
-					restaurantdiv.children('.restaurant-details').show();
-					currentrestaurant = restaurants['businesses'][index];
-					original_search = $('#search-term').html();
-					$('#search-term').html(currentrestaurant['name']);
-					if (sessionStorage.getItem('loggedIn') == 'true') {
-						// Check if restaurant has already been favorited
-						var data = {
-							username: sessionStorage.getItem('username'),
-							restaurantName: currentrestaurant['name']
-						}
-						$.ajax({
-							type: "POST",
-							url: "Favorites",
-							data: data,
-							success: function (response) {
-								if (response.trim() == 'true') {
-									restaurantdiv.next().children().html("<i class='fa fa-star'> Remove from favorites");
-									favorited = true;
-								} else {
-									favorited = false;
-								}
-							}, error: function (error) {
-								alert("Favoriting error");
+				restaurantdiv.children('.restaurant-desc').hide();
+				restaurantdiv.children('.restaurant-details').show();
+				currentrestaurant = restaurants['businesses'][index];
+				original_search = $('#search-term').html();
+				$('#search-term').html(currentrestaurant['name']);
+				if (sessionStorage.getItem('loggedIn') == 'true') {
+					// Check if restaurant has already been favorited
+					let data = {
+						username: sessionStorage.getItem('username'),
+						restaurantName: currentrestaurant['name']
+					}
+					$.ajax({
+						type: "POST",
+						url: "Favorites",
+						data: data,
+						success: function (response) {
+							if (response.trim() == 'true') {
+								restaurantdiv.next().children().html("<i class='fa fa-star'> Remove from favorites");
+								favorited = true;
+							} else {
+								favorited = false;
 							}
-						});
-						//
-						restaurantdiv.next().show();
-						restaurantdiv.next().next().show();
-					} else {
-						restaurantdiv.next().hide();
-						restaurantdiv.next().next().hide();
-					}
-				} else {
-					window.location = restaurantdiv.children('.restaurant-desc').children('.url-link').text();
-				}
-			});
-
-			// When add to reservation is clicked
-			$(document).on('click', '.add-to-reservations', function () {
-				if ($(this).next().is(':hidden')) {
-					$(this).next().show();
-				} else {
-					$(this).next().hide();
-				}
-			});
-
-			// When add to favorites is clicked
-			$(document).on('click', '.add-to-favorites', function () {
-				var favoritesbutton = $(this).children();
-				if (!favorited) {
-					// ADD TO FAVORITES
-					var favoritedata = {};
-					favoritedata['name'] = currentrestaurant['name'];
-					favoritedata['address'] = currentrestaurant["location"]["display_address"].join(' ');
-					favoritedata['image'] = currentrestaurant["image_url"];
-					favoritedata['url'] = currentrestaurant["url"].split('?')[0];
-					favoritedata['phone'] = currentrestaurant["display_phone"];
-					favoritedata['cuisine'] = currentrestaurant["categories"][0]["title"]
-					favoritedata['price'] = currentrestaurant['price'];
-					favoritedata['rating'] = currentrestaurant['rating'];
-					favoritedata['username'] = sessionStorage.getItem('username');
-					$.ajax({
-						type: "POST",
-						url: "Favorites",
-						data: favoritedata,
-						success: function (response) {
-							favoritesbutton.html("<i class='fa fa-star'> Remove from favorites");
-							favorited = true;
 						}, error: function (error) {
 							alert("Favoriting error");
 						}
 					});
+					//
+					restaurantdiv.next().show();
+					restaurantdiv.next().next().show();
 				} else {
-					// REMOVE IT FROM FAVORITES
-					var favoritedata = {};
-					favoritedata['username'] = sessionStorage.getItem('username');
-					favoritedata['name'] = currentrestaurant['name'];
-					favoritedata['changeback'] = 'yes';
-					$.ajax({
-						type: "POST",
-						url: "Favorites",
-						data: favoritedata,
-						success: function (response) {
-							favoritesbutton.html("<i class='fa fa-star'> Add to favorites");
-							favorited = false;
-						}, error: function (error) {
-							alert("Favoriting error");
-						}
-					});
+					restaurantdiv.next().hide();
+					restaurantdiv.next().next().hide();
 				}
-			});
+			} else {
+				window.location = restaurantdiv.children('.restaurant-desc').children('.url-link').text();
+			}
+		});
 
-			// Submit reservations
-			$(document).on('submit', '.reservation', function (e) {
-				e.preventDefault();
-				console.log("Reservation submitted");
-				reservationdataform = $(this).serialize();
-				const params = new URLSearchParams(reservationdataform);
+		// When add to reservation is clicked
+		$(document).on('click', '.add-to-reservations', function () {
+			if ($(this).next().is(':hidden')) {
+				$(this).next().show();
+			} else {
+				$(this).next().hide();
+			}
+		});
 
-				const dateInputValue = params.get('dateInput');
-				const timeInputValue = params.get('timeInput');
-
-				reservationdata = {};
-				reservationdata['date'] = dateInputValue;
-				reservationdata['time'] = timeInputValue;
-				reservationdata['text'] = reservationdataform['text'];
-				reservationdata['name'] = currentrestaurant['name'];
-				reservationdata['address'] = currentrestaurant["location"]["display_address"].join(' ');
-				reservationdata['image'] = currentrestaurant["image_url"];
-				reservationdata['url'] = currentrestaurant["url"].split('?')[0];
-				reservationdata['phone'] = currentrestaurant["display_phone"];
-				reservationdata['cuisine'] = currentrestaurant["categories"][0]["title"];
-				reservationdata['price'] = currentrestaurant['price'];
-				reservationdata['rating'] = currentrestaurant['rating'];
-				reservationdata['username'] = sessionStorage.getItem('username');
-				console.log(reservationdata);
-				$(this).hide();
+		// When add to favorites is clicked
+		$(document).on('click', '.add-to-favorites', function () {
+			let favoritesbutton = $(this).children();
+			if (!favorited) {
+				// ADD TO FAVORITES
+				let favoritedata = {};
+				favoritedata['name'] = currentrestaurant['name'];
+				favoritedata['address'] = currentrestaurant["location"]["display_address"].join(' ');
+				favoritedata['image'] = currentrestaurant["image_url"];
+				favoritedata['url'] = currentrestaurant["url"].split('?')[0];
+				favoritedata['phone'] = currentrestaurant["display_phone"];
+				favoritedata['cuisine'] = currentrestaurant["categories"][0]["title"]
+				favoritedata['price'] = currentrestaurant['price'];
+				favoritedata['rating'] = currentrestaurant['rating'];
+				favoritedata['username'] = sessionStorage.getItem('username');
 				$.ajax({
 					type: "POST",
-					url: "Reservations",
-					data: reservationdata,
+					url: "Favorites",
+					data: favoritedata,
 					success: function (response) {
-						console.log('Reservation was successful');
+						favoritesbutton.html("<i class='fa fa-star'> Remove from favorites");
+						favorited = true;
 					}, error: function (error) {
-						alert("Reservation error");
+						alert("Favoriting error");
 					}
 				});
-				$(this).trigger("reset");
+			} else {
+				// REMOVE IT FROM FAVORITES
+				let favoritedata = {};
+				favoritedata['username'] = sessionStorage.getItem('username');
+				favoritedata['name'] = currentrestaurant['name'];
+				favoritedata['changeback'] = 'yes';
+				$.ajax({
+					type: "POST",
+					url: "Favorites",
+					data: favoritedata,
+					success: function (response) {
+						favoritesbutton.html("<i class='fa fa-star'> Add to favorites");
+						favorited = false;
+					}, error: function (error) {
+						alert("Favoriting error");
+					}
+				});
+			}
+		});
+
+		// Submit reservations
+		$(document).on('submit', '.reservation', function (e) {
+			e.preventDefault();
+			console.log("Reservation submitted");
+			reservationdataform = $(this).serialize();
+			const params = new URLSearchParams(reservationdataform);
+
+			const dateInputValue = params.get('dateInput');
+			const timeInputValue = params.get('timeInput');
+
+			reservationdata = {};
+			reservationdata['date'] = dateInputValue;
+			reservationdata['time'] = timeInputValue;
+			reservationdata['text'] = reservationdataform['text'];
+			reservationdata['name'] = currentrestaurant['name'];
+			reservationdata['address'] = currentrestaurant["location"]["display_address"].join(' ');
+			reservationdata['image'] = currentrestaurant["image_url"];
+			reservationdata['url'] = currentrestaurant["url"].split('?')[0];
+			reservationdata['phone'] = currentrestaurant["display_phone"];
+			reservationdata['cuisine'] = currentrestaurant["categories"][0]["title"];
+			reservationdata['price'] = currentrestaurant['price'];
+			reservationdata['rating'] = currentrestaurant['rating'];
+			reservationdata['username'] = sessionStorage.getItem('username');
+			console.log(reservationdata);
+			$(this).hide();
+			$.ajax({
+				type: "POST",
+				url: "Reservations",
+				data: reservationdata,
+				success: function (response) {
+					console.log('Reservation was successful');
+				}, error: function (error) {
+					alert("Reservation error");
+				}
 			});
+			$(this).trigger("reset");
 		});
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
