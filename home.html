@@ -99,7 +99,14 @@
 				</form>
 			</div>
 		</div>
-		<div id="search-results"></div>
+		<div class="container mt-4" id="search-results">
+
+			<div class="row text-center hidden" id="results">
+				<p><em>Showing <strong><span id="numResults">0</span></strong> of <strong><span
+								id="totalResults">0</span></strong>
+						result(s)</em></p>
+			</div>
+		</div>
 	</div>
 
 
@@ -216,7 +223,7 @@
 					return response.json();
 				})
 				.then(result => {
-					displayRestaurants(result['businesses']);
+					displayRestaurants(result);
 				})
 				.catch(error => {
 					console.error('There was a problem with the fetch operation:', error);
@@ -225,9 +232,19 @@
 			$(this).trigger("reset");
 		});
 
-		function displayRestaurants(restaurants) {
+		function displayRestaurants(result) {
+			let restaurants = result["businesses"];
+			let numResults = document.getElementById("numResults");
+			numResults.innerHTML = restaurants.length;
+			let totalResults = document.getElementById("totalResults");
+			totalResults.innerHTML = result["total"];
+
+			document.getElementById("results").classList.remove("hidden");
+
+
+			console.log(result);
 			restaurants.forEach(function (restaurant) {
-				console.log(restaurant.name);
+				//console.log(restaurant);
 			});
 		}
 
