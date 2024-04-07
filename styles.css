@@ -37,23 +37,8 @@ h1 {
     overflow: hidden;
 }
 
-
-
-.mapbtn {
-    color: white;
-    background-color: rgb(27, 103, 207);
-    border: 0px;
-    height: 30px;
-    border-radius: 5px;
-    width: 500px;
-    position: absolute;
-    top: 70px;
-    right: 0px;
-    font-size: 14px;
-}
-
-#form-div-and-maps {
-    position: relative;
+.hidden {
+    display: none;
 }
 
 #location-pin {
