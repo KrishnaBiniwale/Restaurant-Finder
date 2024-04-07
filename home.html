@@ -19,84 +19,87 @@
 <body>
 	<div id="map">
 	</div>
-	<div class="container-fluid" id="content">
-		<div class="row">
-			<div class="container">
-				<nav class="navbar navbar-expand-lg bg-body-tertiary">
-					<div class="container-fluid">
-						<a class="navbar-brand col-5 fs-3" href="#">Restaurant-Finder</a>
-						<div class="collapse navbar-collapse col-7" id="navbarText">
-							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-								<li class="nav-item">
-									<a class="nav-link active fs-5" aria-current="page" href="#">Home</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link fs-5" href="#">Favorites</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link fs-5" href="#">Reservations</a>
-								</li>
-							</ul>
-							<a class="nav-link fs-5 me-4" href="#">Login / Signup</a>
+	<div id="page">
+		<div class="container-fluid" id="content">
+			<div class="row">
+				<div class="container">
+					<nav class="navbar navbar-expand-lg bg-body-tertiary">
+						<div class="container-fluid">
+							<a class="navbar-brand col-5 fs-3" href="#">Restaurant-Finder</a>
+							<div class="collapse navbar-collapse col-7" id="navbarText">
+								<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+									<li class="nav-item">
+										<a class="nav-link active fs-5" aria-current="page" href="#">Home</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link fs-5" href="#">Favorites</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link fs-5" href="#">Reservations</a>
+									</li>
+								</ul>
+								<a class="nav-link fs-5 me-4" href="#">Login / Signup</a>
+							</div>
 						</div>
-					</div>
-				</nav>
+					</nav>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="container" id="search-form">
-		<div class="row justify-content-center">
-			<img id="home-img" src="homepage.jpg" alt="Home Page">
+		<div class="container" id="search-form">
+			<div class="row justify-content-center">
+				<img id="home-img" src="homepage.jpg" alt="Home Page">
+			</div>
+			<div class="mt-3">
+				<h4 class="text-center fw-normal">Search For Restaurant</h4>
+				<form name="form" id="form">
+					<div class="row">
+						<div class="col-8">
+
+							<input type="radio" class="btn-check" name="search-parameter" id="best-match"
+								autocomplete="off" checked>
+							<label class="btn btn-outline-danger" for="best-match">Best Match</label>
+
+							<input type="radio" class="btn-check" name="search-parameter" id="rating"
+								autocomplete="off">
+							<label class="btn btn-outline-danger" for="rating">Rating</label>
+
+							<input type="radio" class="btn-check" name="search-parameter" id="review-count"
+								autocomplete="off">
+							<label class="btn btn-outline-danger" for="review-count">Review Count</label>
+
+							<input type="radio" class="btn-check" name="search-parameter" id="distance"
+								autocomplete="off">
+							<label class="btn btn-outline-danger" for="distance">Distance</label>
+						</div>
+						<div class="col-4">
+							<button onclick="revealMap()" type="button" class="mapbtn btn btn-lg btn-primary">
+								Google Maps <i class="fa-solid fa-map-pin"></i></button>
+						</div>
+					</div>
+					<div class="row mt-4">
+						<div class="form-floating col-10">
+							<input type="text" class="form-control" id="restaurant-name" placeholder="Restaurant">
+							<label for="restaurant-name" class="ms-3">Restaurant Name</label>
+						</div>
+						<div class="col-2 my-auto">
+							<button type="submit" class="btn btn-lg btn-success px-4"><i
+									class="fa-solid fa-magnifying-glass"></i></button>
+						</div>
+					</div>
+					<div class="hidden">
+						<label>
+							<input type="number" id="latitude" name="latitude" placeholder="34.02116" min="-90" max="90"
+								step="0.000000000000001">
+						</label>
+						<label>
+							<input type="number" id="longitude" name="longitude" placeholder="-118.287132" min="-180"
+								max="180" step="0.000000000000001">
+						</label>
+					</div>
+				</form>
+			</div>
 		</div>
-		<div class="mt-3">
-			<h4 class="text-center fw-normal">Search For Restaurant</h4>
-			<form name="form" id="form">
-				<div class="row">
-					<div class="col-8">
-
-						<input type="radio" class="btn-check" name="search-parameter" id="best-match" autocomplete="off"
-							checked>
-						<label class="btn btn-outline-danger" for="best-match">Best Match</label>
-
-						<input type="radio" class="btn-check" name="search-parameter" id="rating" autocomplete="off">
-						<label class="btn btn-outline-danger" for="rating">Rating</label>
-
-						<input type="radio" class="btn-check" name="search-parameter" id="review-count"
-							autocomplete="off">
-						<label class="btn btn-outline-danger" for="review-count">Review Count</label>
-
-						<input type="radio" class="btn-check" name="search-parameter" id="distance" autocomplete="off">
-						<label class="btn btn-outline-danger" for="distance">Distance</label>
-					</div>
-					<div class="col-4">
-						<button onclick="revealMap()" type="button" class="mapbtn btn btn-lg btn-primary">
-							Google Maps <i class="fa-solid fa-map-pin"></i></button>
-					</div>
-				</div>
-				<div class="row mt-4">
-					<div class="form-floating col-10">
-						<input type="text" class="form-control" id="restaurant-name" placeholder="Restaurant">
-						<label for="restaurant-name" class="ms-3">Restaurant Name</label>
-					</div>
-					<div class="col-2 my-auto">
-						<button type="submit" class="btn btn-lg btn-success px-4"><i
-								class="fa-solid fa-magnifying-glass"></i></button>
-					</div>
-				</div>
-				<div class="hidden">
-					<label>
-						<input type="number" id="latitude" name="latitude" placeholder="34.02116" min="-90" max="90"
-							step="0.000000000000001">
-					</label>
-					<label>
-						<input type="number" id="longitude" name="longitude" placeholder="-118.287132" min="-180"
-							max="180" step="0.000000000000001">
-					</label>
-				</div>
-			</form>
-		</div>
-	</div>
-	<div id="append"></div>
+		<div id="search-results"></div>
 	</div>
 
 
@@ -104,7 +107,7 @@
 
 		function revealMap() {
 			$('#map').show();
-			document.getElementById('content').classList.add("dim");
+			document.getElementById('page').classList.add("dim");
 		}
 
 		function initMap() {
@@ -135,7 +138,7 @@
 				var latlong = JSON.parse(JSON.stringify(mapsMouseEvent.latLng.toJSON(), null));
 				//console.log(latlong['lat'] + ", " + latlong['lng']);
 				$('#map').hide();
-				document.getElementById('content').classList.remove("dim");
+				document.getElementById('page').classList.remove("dim");
 				document.getElementById('latitude').value = latlong['lat'];
 				document.getElementById('longitude').value = latlong['lng'];
 			});
@@ -177,23 +180,23 @@
 						$('.container').hide();
 						result = "<h1 id='search-term'>Results for \"" + search + "\"</h1><hr>";
 						restaurants = JSON.parse(response);
-
+	
 						restaurants["businesses"].forEach(function (item) {
 							result += "<div class=\"restaurant\"><div class=\"restaurant-img\">";
 							result += "<img src=\"" + item["image_url"] + "\" alt=Restaurant-Image></div><div class=\"restaurant-desc\">"
-
+	
 							result += "<h3>" + item["name"] + "</h3>";
 							result += "<p>" + item["location"]["display_address"].join(' ') + "</p>";
 							result += "<a class='url-link' href='" + item["url"].split('?')[0] + "'>" + item["url"].split('?')[0] + "</a>";
-
+	
 							result += "</div><div class='restaurant-details'>"
-
+	
 							var details = "";
 							details += "<p>Address: " + item["location"]["display_address"].join(' ') + "</p>";
 							details += "<p>Phone No. " + item["display_phone"] + "</p>";
 							details += "<p>Cuisine: " + item["categories"][0]["title"] + "</p>";
 							details += "<p>Price: " + item["price"] + "</p>";
-
+	
 							details += "<p>Rating: ";
 							var i;
 							for (i = 1; i <= item['rating']; i++) {
@@ -203,16 +206,16 @@
 								details += '<i class="fa fa-star-half-o"></i>'
 							}
 							details += "</p>";
-
+	
 							result += details;
 							result += "</div></div>";
-
+	
 							// Favorites and reservation
-
+	
 							result += "<div class='add-to-favorites'>";
 							result += "<p><i class='fa fa-star'></i> Add to Favorites</p>";
 							result += "</div>";
-
+	
 							result += "<div class='add-to-reservations'>";
 							result += "<p>Add to Reservation</p></div>";
 							result += "<form class='reservation'>";
@@ -220,7 +223,7 @@
 							result += '<input type="time" class="timeInput" name="timeInput" placeholder="Time" required></div>';
 							result += '<div class="wall-of-text"><textarea class="reservation-text" name="text" rows="6" cols="202" placeholder="Reservation Notes"></textarea></div>';
 							result += '<div class="submit-reservation"><input class="reservation-submit" type="submit" value="Submit Reservation"></div>';
-
+	
 							result += "</div></form></div><hr>";
 						});
 						$('#append').html(result);

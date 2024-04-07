@@ -15,8 +15,10 @@ nav {
 
 
 .dim {
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
     filter: brightness(50%);
-    box-shadow: 0 0 0 10000px rgba(0, 0, 0, .5);
+    box-shadow: 0 0 0 10000000px rgba(0, 0, 0, .5);
 }
 
 h1 {
