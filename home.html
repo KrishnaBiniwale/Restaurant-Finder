@@ -26,7 +26,7 @@
 					<nav class="navbar navbar-expand-lg bg-body-tertiary">
 						<div class="container-fluid">
 							<a class="navbar-brand col-5 fs-3" href="#">Restaurant-Finder</a>
-							<div class="collapse navbar-collapse col-7" id="navbarText">
+							<div class="navbar col-7" id="navbarText">
 								<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 									<li class="nav-item">
 										<a class="nav-link active fs-5" aria-current="page" href="#">Home</a>
@@ -38,7 +38,7 @@
 										<a class="nav-link fs-5" href="#">Reservations</a>
 									</li>
 								</ul>
-								<a class="nav-link fs-5 me-4" href="#">Login / Signup</a>
+								<a class="nav-link fs-5 me-4 col-lg-3 col-12" href="#">Login / Signup</a>
 							</div>
 						</div>
 					</nav>
@@ -53,25 +53,25 @@
 				<h4 class="text-center fw-normal">Search For Restaurant</h4>
 				<form name="form" id="form">
 					<div class="row">
-						<div class="col-8">
+						<div class="col-12 col-lg-6 mb-2 d-flex justify-content-center">
 
-							<input type="radio" class="btn-check" name="search-parameter" id="best-match"
+							<input type="radio" class="btn-check " name="search-parameter" id="best-match"
 								autocomplete="off" checked>
-							<label class="btn btn-outline-danger" for="best-match">Best Match</label>
+							<label class="btn btn-outline-danger me-2" for="best-match">Best Match</label>
 
 							<input type="radio" class="btn-check" name="search-parameter" id="rating"
 								autocomplete="off">
-							<label class="btn btn-outline-danger" for="rating">Rating</label>
+							<label class="btn btn-outline-danger me-2" for="rating">Rating</label>
 
 							<input type="radio" class="btn-check" name="search-parameter" id="review-count"
 								autocomplete="off">
-							<label class="btn btn-outline-danger" for="review-count">Review Count</label>
+							<label class="btn btn-outline-danger me-2" for="review-count">Review Count</label>
 
 							<input type="radio" class="btn-check" name="search-parameter" id="distance"
 								autocomplete="off">
 							<label class="btn btn-outline-danger" for="distance">Distance</label>
 						</div>
-						<div class="col-4">
+						<div class="col-12 col-lg-5 d-flex justify-content-center">
 							<button onclick="revealMap()" type="button" class="mapbtn btn btn-lg btn-primary">
 								Google Maps <i class="fa-solid fa-map-pin"></i></button>
 						</div>
