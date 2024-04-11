@@ -56,3 +56,9 @@ img {
     height: 300px;
     width: 300px;
 }
+
+.hover:hover {
+    background-color: rgba(0, 0, 0, 0.10);
+    filter: brightness(90%);
+    opacity: 0.90;
+}

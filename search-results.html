@@ -43,6 +43,14 @@
                 </div>
             </div>
         </div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb hidden ps-3">
+                <li class="breadcrumb-item fs-4"><a href="home.html">Home</a></li>
+                <li class="breadcrumb-item fs-4"><a href="" onclick="reloadPage()">Search</a>
+                </li>
+                <li class="breadcrumb-item active fs-4" aria-current="details">Details</li>
+            </ol>
+        </nav>
         <div class="container mt-4" id="search-results">
 
             <div class="row text-center" id="results">
@@ -1053,25 +1061,10 @@
                 restaurants[0] = result;
             }
 
-            // Displays # of results
-            let resultsP = document.getElementById("results-p");
-            let navigation = document.getElementById("navigation");
-            if (result['total']) {
-                let numResults = document.getElementById("numResults");
-                numResults.innerHTML = restaurants.length;
-                let totalResults = document.getElementById("totalResults");
-                totalResults.innerHTML = result['total'];
-                resultsP.classList.remove("hidden");
-                navigation.classList.remove("hidden");
-            } else {
-                resultsP.classList.add("hidden");
-                navigation.classList.add("hidden");
-            }
-
 
             let i = 0;
             let screen = 0;
-            if (window.innerWidth >= 992) {
+            if (window.innerWidth >= 992 && restaurants.length > 1) {
                 screen = 2;
             }
             else {
@@ -1124,7 +1117,7 @@
                 col2.appendChild(price);
 
                 let button = document.createElement("button");
-                button.classList.add("btn", "btn-success", "mt-3", "btn-lg");
+                button.classList.add("btn", "btn-success", "mt-3", "btn-lg", "add-to-favorites", "hidden");
                 button.innerHTML = "Add to Favorites";
                 button.href = "favorites.html";
                 button.addEventListener('click', function () {
@@ -1137,11 +1130,11 @@
                 row3.appendChild(col2);
                 row3.appendChild(button);
                 container.appendChild(row3);
-                container.addEventListener('click', function () {
-                    displayRestaurants(restaurant);
-                });
 
                 row.appendChild(container);
+                row.addEventListener('click', function () {
+                    displayRestaurants(restaurant);
+                });
 
                 i++;
                 if (i % screen == 0) {
@@ -1150,6 +1143,33 @@
                     searchResults.appendChild(document.createElement("hr"));
                     row = document.createElement("div");
                     row.classList.add("row", "justify-content-center", "restaurant");
+                }
+            }
+
+            // Displays # of results and shows/hides appropriate information
+            let resultsP = document.getElementById("results-p");
+            let navigation = document.getElementById("navigation");
+            if (result['total']) {
+                let numResults = document.getElementById("numResults");
+                numResults.innerHTML = restaurants.length;
+                let totalResults = document.getElementById("totalResults");
+                totalResults.innerHTML = result['total'];
+                resultsP.classList.remove("hidden");
+                navigation.classList.remove("hidden");
+                let restaurantContainers = document.querySelectorAll('.restaurant');
+                for (let k = 0; k < restaurantContainers.length; k++) {
+                    restaurantContainers[k].classList.add("hover");
+                }
+            } else {
+                resultsP.classList.add("hidden");
+                navigation.classList.add("hidden");
+                let favoriteButtons = document.querySelectorAll('.add-to-favorites');
+                for (let k = 0; k < favoriteButtons.length; k++) {
+                    favoriteButtons[k].classList.remove('hidden');
+                }
+                let breadcrumbs = document.querySelectorAll('.breadcrumb');
+                for (let k = 0; k < breadcrumbs.length; k++) {
+                    breadcrumbs[k].classList.remove('hidden');
                 }
             }
         }
@@ -1166,6 +1186,14 @@
             for (let i = 0; i < hr.length; i++) {
                 hr[i].parentNode.removeChild(hr[i]);
             }
+        }
+
+        function reloadPage() {
+            // Get the current URL
+            let url = window.location.href;
+
+            // Redirect to the current URL
+            window.location.href = url;
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
