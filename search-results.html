@@ -17,10 +17,8 @@
 </head>
 
 <body>
-    <div id="map">
-    </div>
     <div id="page">
-        <div class="container-fluid" id="content">
+        <div class="container-fluid" id="navigation">
             <div class="row">
                 <div class="container">
                     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -29,7 +27,7 @@
                             <div class="navbar col-7" id="navbarText">
                                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                     <li class="nav-item">
-                                        <a class="nav-link active fs-5" aria-current="page" href="#">Home</a>
+                                        <a class="nav-link active fs-5" aria-current="page" href="home.html">Home</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link fs-5" href="favorites.html">Favorites</a>
@@ -47,10 +45,10 @@
         </div>
         <div class="container mt-4" id="search-results">
 
-            <div class="row text-center hidden" id="results">
-                <p><em>Showing <strong><span id="numResults">0</span></strong> of <strong><span
-                                id="totalResults">0</span></strong>
-                        result(s) for <span id="search-term"></span></em></p>
+            <div class="row text-center" id="results">
+                <p class="fs-5" id="results-p"><em>Showing <strong><span id="numResults">0</span></strong> of
+                        <strong><span id="totalResults">0</span></strong>
+                        result(s) for "<span id="search-term"></span>"</em></p>
             </div>
         </div>
     </div>
@@ -1002,7 +1000,7 @@
             let params = getURLParams();
             //console.log(params);
             // Base URL of the search endpoint
-            let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
+            /*let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
 
             // Construct the query URL using object literals and template literals
             let queryURL = `${baseURL}?${Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&')}`;
@@ -1035,23 +1033,44 @@
 
             //removeAll();
             //console.log(result);
-            //displayRestaurants(temp);
+            */
+            displayRestaurants(temp);
             document.getElementById('search-term').innerHTML = params['restaurant-name'];
-            document.activeElement.blur();
         });
 
         function displayRestaurants(result) {
-            let restaurants = result["businesses"];
-            let numResults = document.getElementById("numResults");
-            numResults.innerHTML = restaurants.length;
-            let totalResults = document.getElementById("totalResults");
-            totalResults.innerHTML = result["total"];
+            removeAll();
+            // Acquires the restaurant
+            let restaurants;
+            if (result['businesses']) {
+                restaurants = result["businesses"];
+            }
+            else if (result.length > 1) {
+                restaurants = result;
+            }
+            else {
+                restaurants = [];
+                restaurants[0] = result;
+            }
 
-            document.getElementById("results").classList.remove("hidden");
+            // Displays # of results
+            let resultsP = document.getElementById("results-p");
+            let navigation = document.getElementById("navigation");
+            if (result['total']) {
+                let numResults = document.getElementById("numResults");
+                numResults.innerHTML = restaurants.length;
+                let totalResults = document.getElementById("totalResults");
+                totalResults.innerHTML = result['total'];
+                resultsP.classList.remove("hidden");
+                navigation.classList.remove("hidden");
+            } else {
+                resultsP.classList.add("hidden");
+                navigation.classList.add("hidden");
+            }
 
 
-            var i = 0;
-            var screen = 0;
+            let i = 0;
+            let screen = 0;
             if (window.innerWidth >= 992) {
                 screen = 2;
             }
@@ -1059,17 +1078,16 @@
                 screen = 1;
             }
 
-            var row = document.createElement("div");
+            let row = document.createElement("div");
             row.classList.add("row", "justify-content-center", "restaurant");
-            restaurants.forEach(function (restaurant) {
+            //console.log(restaurants);
+            for (let j = 0; j < restaurants.length; j++) {
+                let restaurant = restaurants[j];
                 let container = document.createElement("div");
                 container.classList.add("col-6", "container");
                 let col1 = document.createElement("div");
                 col1.classList.add("col-lg-6", "col-12");
 
-                let a = document.createElement("a");
-                a.href = restaurant["url"];
-                a.target = "_blank";
                 let img = document.createElement("img");
                 img.classList.add("img-fluid");
                 img.src = restaurant["image_url"];
@@ -1077,8 +1095,7 @@
                     img.src = "https://content.mycutegraphics.com/graphics/movie/movie-clapper-board-blank.png";
                 };
                 img.alt = restaurant["name"];
-                a.appendChild(img);
-                col1.appendChild(a);
+                col1.appendChild(img);
 
                 let col2 = document.createElement("div");
                 col2.classList.add("col-lg-6", "col-12");
@@ -1113,13 +1130,16 @@
                 button.addEventListener('click', function () {
                     window.location.href = 'favorites.html';
                 });
-                col2.appendChild(button);
 
                 let row3 = document.createElement("div");
                 row3.classList.add("row", "pb-4");
                 row3.appendChild(col1);
                 row3.appendChild(col2);
+                row3.appendChild(button);
                 container.appendChild(row3);
+                container.addEventListener('click', function () {
+                    displayRestaurants(restaurant);
+                });
 
                 row.appendChild(container);
 
@@ -1131,11 +1151,11 @@
                     row = document.createElement("div");
                     row.classList.add("row", "justify-content-center", "restaurant");
                 }
-            });
+            }
         }
 
 
-        /*function removeAll() {
+        function removeAll() {
 
             let restaurants = document.querySelectorAll('.restaurant');
             for (let i = 0; i < restaurants.length; i++) {
@@ -1146,7 +1166,7 @@
             for (let i = 0; i < hr.length; i++) {
                 hr[i].parentNode.removeChild(hr[i]);
             }
-        }*/
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
