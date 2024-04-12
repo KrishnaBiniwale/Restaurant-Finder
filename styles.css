@@ -47,7 +47,6 @@ h1 {
 }
 
 img {
-    border-radius: 25px;
     overflow: hidden;
     width: 100%;
 }
@@ -61,5 +60,4 @@ img {
     background-color: rgba(0, 0, 0, 0.10);
     filter: brightness(90%);
     opacity: 0.95;
-    border-radius: 25px;
 }

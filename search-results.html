@@ -51,12 +51,14 @@
                 <li class="breadcrumb-item active fs-4" aria-current="details">Details</li>
             </ol>
         </nav>
-        <div class="container mt-4" id="search-results">
+        <div class="container mt-4">
+            <div class="row justify-content-center" id="search-results">
 
-            <div class="row text-center" id="results">
-                <p class="fs-5" id="results-p"><em>Showing <strong><span id="numResults">0</span></strong> of
-                        <strong><span id="totalResults">0</span></strong>
-                        result(s) for "<span id="search-term"></span>"</em></p>
+                <div class="row text-center" id="results">
+                    <p class="fs-5" id="results-p"><em>Showing <strong><span id="numResults">0</span></strong> of
+                            <strong><span id="totalResults">0</span></strong>
+                            result(s) for "<span id="search-term"></span>"</em></p>
+                </div>
             </div>
         </div>
     </div>
@@ -1061,71 +1063,48 @@
                 restaurants[0] = result;
             }
 
-
-            let i = 0;
-            let screen = 0;
-            if (window.innerWidth >= 992 && restaurants.length > 1) {
-                screen = 2;
-            }
-            else {
-                screen = 1;
-            }
-            let cols = "col-" + (12 / screen);
-            let inverseCols = 0;
-
-            let row = document.createElement("div");
-            row.classList.add("row", "justify-content-center");
             //console.log(restaurants);
             for (let j = 0; j < restaurants.length; j++) {
                 let restaurant = restaurants[j];
-                let wrapper = document.createElement("div");
-                wrapper.classList.add("restaurant");
-                let container = document.createElement("div");
-                container.classList.add("container");
-                let col1 = document.createElement("div");
-                col1.classList.add("col-lg-6", "col-12", "text-center");
-                wrapper.classList.add(cols);
-                if (screen == 2) {
-                    container.classList.add("col-12");
-                }
+                let restaurantContainer = document.createElement("div");
+                restaurantContainer.classList.add("container", "col-lg-5", "col-lg-offset-1", "col-12", "restaurant", "border", "border-1", "border-dark-subtle", "rounded-5", "my-4");
+                let leftCol = document.createElement("div");
+                leftCol.classList.add("col-lg-6", "col-12", "text-center");
 
                 let img = document.createElement("img");
-                img.classList.add("img-fluid");
+                img.classList.add("img-fluid", "rounded-5");
                 img.src = restaurant["image_url"];
                 img.onerror = function () {
                     img.src = "https://content.mycutegraphics.com/graphics/movie/movie-clapper-board-blank.png";
                 };
                 img.alt = restaurant["name"];
-                col1.appendChild(img);
+                leftCol.appendChild(img);
 
-                let col2 = document.createElement("div");
-                if (screen == 1 && restaurants.length > 1) {
-                    col2.classList.add("text-center");
-                }
-                col2.classList.add("col-lg-6", "col-12");
+                let rightCol = document.createElement("div");
+                rightCol.classList.add("col-lg-6", "col-12");
 
-                let row2 = document.createElement("div");
-                row2.classList.add("row", "pb-4");
+                let restaurantName = document.createElement("div");
+                restaurantName.classList.add("row", "pb-4");
                 let name = document.createElement("h4");
                 name.classList.add("text-center", "underline", "mt-3");
                 name.innerHTML = restaurant["name"];
-                row2.appendChild(name);
-                container.appendChild(row2);
+                restaurantName.appendChild(name);
+                restaurantContainer.appendChild(restaurantName);
 
                 let rating = document.createElement("h5");
                 rating.classList.add("normal", "mt-4");
                 rating.innerHTML = "Rating: " + restaurant["rating"];
-                col2.appendChild(rating);
+                rightCol.appendChild(rating);
 
                 let reviewCount = document.createElement("h5");
                 reviewCount.classList.add("normal", "mt-4");
                 reviewCount.innerHTML = "Review Count: " + restaurant["review_count"];
-                col2.appendChild(reviewCount);
+                rightCol.appendChild(reviewCount);
 
                 let price = document.createElement("h5");
                 price.classList.add("normal", "mt-4");
                 price.innerHTML = "Price: " + restaurant["price"];
-                col2.appendChild(price);
+                rightCol.appendChild(price);
 
                 let button = document.createElement("button");
                 button.classList.add("btn", "btn-success", "mt-3", "btn-lg", "add-to-favorites", "hidden");
@@ -1135,56 +1114,75 @@
                     window.location.href = 'favorites.html';
                 });
 
-                let row3 = document.createElement("div");
-                row3.classList.add("row", "pb-4");
-                row3.appendChild(col1);
-                row3.appendChild(col2);
-                row3.appendChild(button);
-                container.appendChild(row3);
-
-                wrapper.appendChild(container);
-                row.appendChild(wrapper);
-                row.addEventListener('click', function () {
-                    displayRestaurants(restaurant);
+                let restaurantInfo = document.createElement("div");
+                restaurantInfo.classList.add("row", "pb-4");
+                restaurantInfo.appendChild(leftCol);
+                restaurantInfo.appendChild(rightCol);
+                restaurantInfo.appendChild(button);
+                restaurantContainer.appendChild(restaurantInfo);
+                restaurantContainer.addEventListener('click', function () {
+                    expandInfo(restaurantContainer, restaurant);
                 });
 
-                i++;
-                if (i % screen == 0) {
-                    let searchResults = document.getElementById("search-results");
-                    searchResults.appendChild(row);
-                    searchResults.appendChild(document.createElement("hr"));
-                    row = document.createElement("div");
-                    row.classList.add("row", "justify-content-center");
-                }
+                let searchResults = document.getElementById("search-results");
+                searchResults.appendChild(restaurantContainer);
             }
 
             // Displays # of results and shows/hides appropriate information
             let resultsP = document.getElementById("results-p");
             let navigation = document.getElementById("navigation");
-            // First part is if multiple restaurants, second part is if 1 restaurant
-            if (result['total']) {
-                let numResults = document.getElementById("numResults");
-                numResults.innerHTML = restaurants.length;
-                let totalResults = document.getElementById("totalResults");
-                totalResults.innerHTML = result['total'];
-                resultsP.classList.remove("hidden");
-                navigation.classList.remove("hidden");
-                let restaurantContainers = document.querySelectorAll('.restaurant');
-                for (let k = 0; k < restaurantContainers.length; k++) {
-                    restaurantContainers[k].classList.add("hover");
+            let numResults = document.getElementById("numResults");
+            numResults.innerHTML = restaurants.length;
+            let totalResults = document.getElementById("totalResults");
+            totalResults.innerHTML = result['total'];
+            resultsP.classList.remove("hidden");
+            navigation.classList.remove("hidden");
+            let restaurantContainers = document.querySelectorAll('.restaurant');
+            for (let k = 0; k < restaurantContainers.length; k++) {
+                restaurantContainers[k].classList.add("hover");
+            }
+        }
+
+        function expandInfo(restaurantContainer, restaurant) {
+            let expanded = false;
+            if (restaurantContainer.classList.contains("col-lg-11")) {
+                expanded = true;
+            }
+            console.log(expanded);
+
+
+            // Expands and retracts additional restaurant information based on whther
+            let rightContainer = getContainerPosition(restaurantContainer);
+            if (!expanded) {
+                if (rightContainer) {
+                    let previousRestaurant = restaurantContainer.previousElementSibling;
+                    restaurantContainer.parentNode.insertBefore(restaurantContainer, previousRestaurant);
+                    restaurantContainer.classList.add("right-container");
                 }
-            } else {
-                resultsP.classList.add("hidden");
-                navigation.classList.add("hidden");
-                let favoriteButtons = document.querySelectorAll('.add-to-favorites');
-                for (let k = 0; k < favoriteButtons.length; k++) {
-                    favoriteButtons[k].classList.remove('hidden');
+                restaurantContainer.classList.add("col-lg-11", "expanded");
+            }
+            else {
+                if (restaurantContainer.classList.contains("right-container")) {
+                    restaurantContainer.classList.remove("right-container");
+                    let nextRestaurant = restaurantContainer.nextElementSibling.nextElementSibling;
+                    restaurantContainer.parentNode.insertBefore(restaurantContainer, nextRestaurant);
                 }
-                let breadcrumbs = document.querySelectorAll('.breadcrumb');
-                for (let k = 0; k < breadcrumbs.length; k++) {
-                    breadcrumbs[k].classList.remove('hidden');
+                restaurantContainer.classList.remove("col-lg-11", "expanded");
+            }
+        }
+
+        function getContainerPosition(restaurantContainer) {
+            let restaurantDivs = document.querySelectorAll('div.restaurant');
+            let index = 0;
+            for (let i = 0; i < restaurantDivs.length; i++) {
+                if (restaurantDivs[i] === restaurantContainer) {
+                    break;
+                }
+                else if (!restaurantDivs[i].classList.contains("expanded")) {
+                    index++;
                 }
             }
+            return index % 2;
         }
 
 
