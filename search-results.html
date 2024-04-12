@@ -1063,7 +1063,6 @@
                 restaurants[0] = result;
             }
 
-            //console.log(restaurants);
             for (let j = 0; j < restaurants.length; j++) {
                 let restaurant = restaurants[j];
                 let restaurantContainer = document.createElement("div");
@@ -1075,7 +1074,7 @@
                 img.classList.add("img-fluid", "rounded-5");
                 img.src = restaurant["image_url"];
                 img.onerror = function () {
-                    img.src = "https://content.mycutegraphics.com/graphics/movie/movie-clapper-board-blank.png";
+                    img.src = "https://www.healthifyme.com/blog/wp-content/uploads/2021/10/All-About-The-Right-Food-Plate-Method.jpg";
                 };
                 img.alt = restaurant["name"];
                 leftCol.appendChild(img);
