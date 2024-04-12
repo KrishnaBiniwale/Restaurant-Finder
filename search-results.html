@@ -1069,7 +1069,7 @@
                 let restaurantContainer = document.createElement("div");
                 restaurantContainer.classList.add("container", "col-lg-5", "col-lg-offset-1", "col-12", "restaurant", "border", "border-1", "border-dark-subtle", "rounded-5", "my-4");
                 let leftCol = document.createElement("div");
-                leftCol.classList.add("col-lg-7", "col-12", "text-center");
+                leftCol.classList.add("text-center", "col-lg-7", "col-12", "restaurant-left-col");
 
                 let img = document.createElement("img");
                 img.classList.add("img-fluid", "rounded-5");
@@ -1081,12 +1081,12 @@
                 leftCol.appendChild(img);
 
                 let rightCol = document.createElement("div");
-                rightCol.classList.add("col-lg-5", "col-12");
+                rightCol.classList.add("col-lg-5", "col-12", "restaurant-right-col", "text-lg-left", "text-center", "text-lg-start");
 
                 let restaurantName = document.createElement("div");
-                restaurantName.classList.add("row", "pb-4");
+                restaurantName.classList.add("row", "pb-4", "restaurant-name", "text-center");
                 let name = document.createElement("h4");
-                name.classList.add("text-center", "underline", "mt-3");
+                name.classList.add("mt-3");
                 name.innerHTML = restaurant["name"];
                 restaurantName.appendChild(name);
                 restaurantContainer.appendChild(restaurantName);
@@ -1119,19 +1119,22 @@
                 categories.innerHTML = categories.innerHTML.slice(0, -2);
                 rightCol.appendChild(categories);
 
-                let button = document.createElement("button");
-                button.classList.add("btn", "btn-success", "mt-3", "btn-lg", "add-to-favorites", "hidden");
-                button.innerHTML = "Add to Favorites";
-                button.href = "favorites.html";
-                button.addEventListener('click', function () {
+                let addToFavoritesWrapper = document.createElement("div");
+                addToFavoritesWrapper.classList.add("hidden", "add-to-favorites");
+                let addToFavoritesButton = document.createElement("button");
+                addToFavoritesButton.classList.add("btn", "btn-success", "btn-lg", "col-12");
+                addToFavoritesButton.innerHTML = "Add to Favorites";
+                addToFavoritesButton.href = "favorites.html";
+                addToFavoritesButton.addEventListener('click', function () {
                     window.location.href = 'favorites.html';
                 });
+                addToFavoritesWrapper.appendChild(addToFavoritesButton);
 
                 let restaurantInfo = document.createElement("div");
                 restaurantInfo.classList.add("row", "pb-4");
                 restaurantInfo.appendChild(leftCol);
                 restaurantInfo.appendChild(rightCol);
-                restaurantInfo.appendChild(button);
+                restaurantInfo.appendChild(addToFavoritesWrapper);
                 restaurantContainer.appendChild(restaurantInfo);
                 restaurantContainer.addEventListener('click', function () {
                     expandInfo(restaurantContainer, restaurant);
@@ -1158,15 +1161,18 @@
 
         // Expands and retracts additional restaurant information
         function expandInfo(restaurantContainer, restaurant) {
+
             let expanded = false;
             if (restaurantContainer.classList.contains("col-lg-11")) {
                 expanded = true;
             }
-            console.log(expanded);
 
 
             // Determines whether a container expands left or right
             let rightContainer = getContainerPosition(restaurantContainer);
+            let leftCol = restaurantContainer.querySelector('div.restaurant-left-col');
+            let rightCol = restaurantContainer.querySelector('div.restaurant-right-col');
+            let addToFavorites = restaurantContainer.querySelector('div.add-to-favorites');
             if (!expanded) {
                 if (rightContainer) {
                     let previousRestaurant = restaurantContainer.previousElementSibling;
@@ -1174,6 +1180,12 @@
                     restaurantContainer.classList.add("right-container");
                 }
                 restaurantContainer.classList.add("col-lg-11", "expanded");
+                leftCol.classList.remove("col-lg-7");
+                leftCol.classList.add("col-lg-3");
+                rightCol.classList.remove("col-lg-5");
+                rightCol.classList.add("col-lg-3");
+                addToFavorites.classList.remove("hidden");
+                addToFavorites.classList.add("col-lg-5", "col-12", "mt-3", "col-lg-offset-1");
             }
             else {
                 if (restaurantContainer.classList.contains("right-container")) {
@@ -1182,6 +1194,12 @@
                     restaurantContainer.parentNode.insertBefore(restaurantContainer, nextRestaurant);
                 }
                 restaurantContainer.classList.remove("col-lg-11", "expanded");
+                leftCol.classList.add("col-lg-7");
+                leftCol.classList.remove("col-lg-3");
+                rightCol.classList.add("col-lg-5");
+                rightCol.classList.remove("col-lg-3");
+                addToFavorites.classList.add("hidden");
+                addToFavorites.classList.remove("col-lg-6", "col-12", "mt-3", "me-3");
             }
         }
 
@@ -1214,10 +1232,7 @@
         }
 
         function reloadPage() {
-            // Get the current URL
             let url = window.location.href;
-
-            // Redirect to the current URL
             window.location.href = url;
         }
     </script>
