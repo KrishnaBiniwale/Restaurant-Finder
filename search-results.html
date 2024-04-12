@@ -1174,7 +1174,6 @@
             let rightCol = restaurantContainer.querySelector('div.restaurant-right-col');
             let addToFavorites = restaurantContainer.querySelector('div.add-to-favorites');
             let restaurantName = restaurantContainer.querySelector('div.restaurant-name');
-            swapAllContainers(restaurantContainer, rightContainer, expanded);
             if (!expanded) {
                 restaurantContainer.classList.add("col-lg-11", "expanded");
                 leftCol.classList.remove("col-lg-7");
@@ -1195,6 +1194,7 @@
                 addToFavorites.classList.remove("col-lg-6", "col-12", "mt-3", "me-3");
                 restaurantName.classList.remove("col-lg-6");
             }
+            swapAllContainers(restaurantContainer, rightContainer, expanded);
         }
 
 
@@ -1223,6 +1223,24 @@
                     swapContainers(restaurantContainer, restaurantContainer.nextElementSibling);
                     restaurantContainer.classList.remove("right-container");
                 }
+            }
+
+            // Scroll to appropriate position
+            let newItemTop = restaurantContainer.getBoundingClientRect().top;
+            let newItemBottom = restaurantContainer.getBoundingClientRect().bottom;
+            console.log(newItemBottom);
+            if (newItemTop < 0) {
+                window.scrollTo({
+                    top: restaurantContainer.getBoundingClientRect().top + window.pageYOffset,
+                    left: 0,
+                    behavior: 'instant',
+                });
+            } else if (newItemBottom > window.innerHeight) {
+                window.scrollTo({
+                    top: restaurantContainer.getBoundingClientRect().bottom + window.pageYOffset - window.innerHeight,
+                    left: 0,
+                    behavior: 'instant',
+                });
             }
 
         }
