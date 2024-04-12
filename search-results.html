@@ -1169,16 +1169,13 @@
 
 
             // Determines whether a container expands left or right
-            let rightContainer = getContainerPosition(restaurantContainer);
+            let rightContainer = getContainerPosition(restaurantContainer) || restaurantContainer.classList.contains("right-container");
             let leftCol = restaurantContainer.querySelector('div.restaurant-left-col');
             let rightCol = restaurantContainer.querySelector('div.restaurant-right-col');
             let addToFavorites = restaurantContainer.querySelector('div.add-to-favorites');
+            let restaurantName = restaurantContainer.querySelector('div.restaurant-name');
             if (!expanded) {
-                if (rightContainer) {
-                    let previousRestaurant = restaurantContainer.previousElementSibling;
-                    restaurantContainer.parentNode.insertBefore(restaurantContainer, previousRestaurant);
-                    restaurantContainer.classList.add("right-container");
-                }
+                swapContainers(restaurantContainer, rightContainer, expanded);
                 restaurantContainer.classList.add("col-lg-11", "expanded");
                 leftCol.classList.remove("col-lg-7");
                 leftCol.classList.add("col-lg-3");
@@ -1186,13 +1183,10 @@
                 rightCol.classList.add("col-lg-3");
                 addToFavorites.classList.remove("hidden");
                 addToFavorites.classList.add("col-lg-5", "col-12", "mt-3", "col-lg-offset-1");
+                restaurantName.classList.add("col-lg-6");
             }
             else {
-                if (restaurantContainer.classList.contains("right-container")) {
-                    restaurantContainer.classList.remove("right-container");
-                    let nextRestaurant = restaurantContainer.nextElementSibling.nextElementSibling;
-                    restaurantContainer.parentNode.insertBefore(restaurantContainer, nextRestaurant);
-                }
+                swapContainers(restaurantContainer, rightContainer, expanded);
                 restaurantContainer.classList.remove("col-lg-11", "expanded");
                 leftCol.classList.add("col-lg-7");
                 leftCol.classList.remove("col-lg-3");
@@ -1200,6 +1194,22 @@
                 rightCol.classList.remove("col-lg-3");
                 addToFavorites.classList.add("hidden");
                 addToFavorites.classList.remove("col-lg-6", "col-12", "mt-3", "me-3");
+                restaurantName.classList.remove("col-lg-6");
+            }
+        }
+
+        function swapContainers(restaurantContainer, rightContainer, expanded) {
+            // TODO
+            if (rightContainer) {
+                if (!expanded) {
+                    let previousRestaurant = restaurantContainer.previousElementSibling;
+                    restaurantContainer.parentNode.insertBefore(restaurantContainer, previousRestaurant);
+                    restaurantContainer.classList.add("right-container");
+                } else {
+                    restaurantContainer.classList.remove("right-container");
+                    let nextRestaurant = restaurantContainer.nextElementSibling.nextElementSibling;
+                    restaurantContainer.parentNode.insertBefore(restaurantContainer, nextRestaurant);
+                }
             }
         }
 
