@@ -1069,7 +1069,7 @@
                 let restaurantContainer = document.createElement("div");
                 restaurantContainer.classList.add("container", "col-lg-5", "col-lg-offset-1", "col-12", "restaurant", "border", "border-1", "border-dark-subtle", "rounded-5", "my-4");
                 let leftCol = document.createElement("div");
-                leftCol.classList.add("col-lg-6", "col-12", "text-center");
+                leftCol.classList.add("col-lg-7", "col-12", "text-center");
 
                 let img = document.createElement("img");
                 img.classList.add("img-fluid", "rounded-5");
@@ -1081,7 +1081,7 @@
                 leftCol.appendChild(img);
 
                 let rightCol = document.createElement("div");
-                rightCol.classList.add("col-lg-6", "col-12");
+                rightCol.classList.add("col-lg-5", "col-12");
 
                 let restaurantName = document.createElement("div");
                 restaurantName.classList.add("row", "pb-4");
@@ -1105,6 +1105,19 @@
                 price.classList.add("normal", "mt-4");
                 price.innerHTML = "Price: " + restaurant["price"];
                 rightCol.appendChild(price);
+
+                let categoriesText = document.createElement("h5");
+                categoriesText.classList.add("normal", "mt-4", "text-decoration-underline");
+                categoriesText.innerHTML = "Categories";
+                rightCol.appendChild(categoriesText);
+
+                let categories = document.createElement("h5");
+                categories.classList.add("normal");
+                for (let i = 0; i < restaurant['categories'].length; i++) {
+                    categories.innerHTML += restaurant['categories'][i]['title'] + ", ";
+                }
+                categories.innerHTML = categories.innerHTML.slice(0, -2);
+                rightCol.appendChild(categories);
 
                 let button = document.createElement("button");
                 button.classList.add("btn", "btn-success", "mt-3", "btn-lg", "add-to-favorites", "hidden");
@@ -1143,6 +1156,7 @@
             }
         }
 
+        // Expands and retracts additional restaurant information
         function expandInfo(restaurantContainer, restaurant) {
             let expanded = false;
             if (restaurantContainer.classList.contains("col-lg-11")) {
@@ -1151,7 +1165,7 @@
             console.log(expanded);
 
 
-            // Expands and retracts additional restaurant information based on whther
+            // Determines whether a container expands left or right
             let rightContainer = getContainerPosition(restaurantContainer);
             if (!expanded) {
                 if (rightContainer) {
