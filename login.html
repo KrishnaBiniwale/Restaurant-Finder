@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Restaurant Finder | Login</title>
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid" id="content">
+        <div class="container-fluid" id="login-form">
             <div class="row text-center mt-4">
                 <h1>Login / Signup</h1>
             </div>
@@ -51,11 +51,9 @@
                     <form action="home.html" method="POST">
                         <div class="mt-5 mb-3 text-center">
                             <p class="d-inline me-2">Select one:</p>
-                            <input type="radio" class="btn-check" name="state" value="login" id="login"
-                                autocomplete="off">
+                            <input type="radio" class="btn-check" name="state" value="login" id="login">
                             <label class="btn btn-outline-primary" for="login">Login</label>
-                            <input type="radio" class="btn-check" name="state" value="signup" id="signup"
-                                autocomplete="off">
+                            <input type="radio" class="btn-check" name="state" value="signup" id="signup">
                             <label class="btn btn-outline-success" for="signup">Signup</label>
                         </div>
                         <div class="mb-3 hidden-toggle hidden">
@@ -66,7 +64,7 @@
                             <label for="password" class="form-label">Password</label>
                             <input type="password" name="password" id="password" class="form-control"
                                 aria-describedby="passwordHelp">
-                            <div class="hidden-toggle hidden" id="passwordHelp" class="form-text">
+                            <div class="hidden-toggle hidden form-text" id="passwordHelp">
                             </div>
                         </div>
                         <div class="hidden-toggle hidden">
