@@ -1174,8 +1174,8 @@
             let rightCol = restaurantContainer.querySelector('div.restaurant-right-col');
             let addToFavorites = restaurantContainer.querySelector('div.add-to-favorites');
             let restaurantName = restaurantContainer.querySelector('div.restaurant-name');
+            swapAllContainers(restaurantContainer, rightContainer, expanded);
             if (!expanded) {
-                swapContainers(restaurantContainer, rightContainer, expanded);
                 restaurantContainer.classList.add("col-lg-11", "expanded");
                 leftCol.classList.remove("col-lg-7");
                 leftCol.classList.add("col-lg-3");
@@ -1186,7 +1186,6 @@
                 restaurantName.classList.add("col-lg-6");
             }
             else {
-                swapContainers(restaurantContainer, rightContainer, expanded);
                 restaurantContainer.classList.remove("col-lg-11", "expanded");
                 leftCol.classList.add("col-lg-7");
                 leftCol.classList.remove("col-lg-3");
@@ -1198,20 +1197,40 @@
             }
         }
 
-        function swapContainers(restaurantContainer, rightContainer, expanded) {
-            // TODO
-            if (rightContainer) {
-                if (!expanded) {
-                    let previousRestaurant = restaurantContainer.previousElementSibling;
-                    restaurantContainer.parentNode.insertBefore(restaurantContainer, previousRestaurant);
-                    restaurantContainer.classList.add("right-container");
-                } else {
-                    restaurantContainer.classList.remove("right-container");
-                    let nextRestaurant = restaurantContainer.nextElementSibling.nextElementSibling;
-                    restaurantContainer.parentNode.insertBefore(restaurantContainer, nextRestaurant);
+
+        function swapAllContainers(restaurantContainer, rightContainer, expanded) {
+            let j = 0;
+            if (rightContainer && expanded) {
+                j++;
+            }
+            let containersBelow = false;
+            for (let i = 0; i < restaurantContainer.parentNode.children.length; i++) {
+                if (containersBelow) {
+                    if (j % 2 && restaurantContainer.parentNode.children[i - 1] != restaurantContainer) {
+                        swapContainers(restaurantContainer.parentNode.children[i - 1], restaurantContainer.parentNode.children[i]);
+                    }
+                    j++;
+                } else if (restaurantContainer.parentNode.children[i] == restaurantContainer) {
+                    containersBelow = true;
                 }
             }
+
+            if (rightContainer) {
+                if (!expanded) {
+                    swapContainers(restaurantContainer.previousElementSibling, restaurantContainer);
+                    restaurantContainer.classList.add("right-container");
+                } else {
+                    swapContainers(restaurantContainer, restaurantContainer.nextElementSibling);
+                    restaurantContainer.classList.remove("right-container");
+                }
+            }
+
         }
+
+        function swapContainers(containerOriginal, containerInsert) {
+            containerOriginal.parentNode.insertBefore(containerInsert, containerOriginal);
+        }
+
 
         function getContainerPosition(restaurantContainer) {
             let restaurantDivs = document.querySelectorAll('div.restaurant');
