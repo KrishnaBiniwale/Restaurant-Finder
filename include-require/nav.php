@@ -16,7 +16,7 @@
                     </div>
                      <div class="navbar col-3 justify-content-end" id="loginNavbar">
 
-                        <?php if (isset($_SESSION['email']) && trim($_SESSION['email']) != '' ) : ?>
+                        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) : ?>
                             <a class="nav-link fs-5 me-4" href="logout.php">Logout</a>
                         <?php else: ?>
                             <a class="nav-link fs-5 me-4" href="login.php">Login / Signup</a>

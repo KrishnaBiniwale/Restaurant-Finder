@@ -5,27 +5,105 @@
 	// Is this user already logged in?
 	if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
 		// User is already logged in. Redirect to homepage.
-		header('Location: home.php');
+		//header('Location: home.php');
+        session_destroy();
 	} else {
-		// User is NOT logged in.
 
-		// Was there a form submission?
-		if (isset($_POST['email']) && isset($_POST['password'])) {
-			// Are credentials valid? TODO
-			if ($_POST['email'] == "trojan@usc.edu" && $_POST['password'] == "trojan") {
-				// Valid login
+        // Login POST
+        if (isset($_POST['state']))
+        {
 
-				$_SESSION['logged_in'] = true;
-				$_SESSION['email'] = $_POST['email'];
+            // Searches DB based on credentials
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+            if ( $mysqli->connect_errno ) {
+                echo $mysqli->connect_error;
+                exit();
+            }
 
-				header('Location: home.php');
-			} else {
-				// Invalid credentials
-				$error = "Invalid username or password.";
-			}
-		}
+            $mysqli->set_charset('utf8');
 
-	}
+            // Handles Login Functionality
+            if ($_POST['state'] == 'login' && isset($email) && isset($password)) {
+
+                $login_query = "SELECT fname, lname, email, password
+                    FROM users
+                    WHERE email = '$email' AND password = '$password'";
+                    
+
+
+                $login_results = $mysqli->query($login_query);
+
+                if ( !$login_results ) {
+                    echo $mysqli->error;
+                    $mysqli->close();
+                    exit();
+                }
+                else if($login_results->num_rows != 1)
+                {
+                    $error = "Invalid Login Credentials.";
+                }
+                else 
+                {
+                    $row = $login_results->fetch_assoc();
+                    $_SESSION['logged_in'] = true;
+                    $_SESSION['email'] = $_POST['email'];
+                    $_SESSION['fname'] = $row['fname'];
+
+                    header('Location: home.php');
+                }
+            }
+            // Handles Signup Functionality
+            else if ($_POST['state'] == 'signup' && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['fname']) && isset($_POST['lname']))
+            {
+                $signup_check = "SELECT fname, lname, email, password
+                    FROM users
+                    WHERE email = '$email'";
+                    
+
+
+                $signup_check_results = $mysqli->query($signup_check);
+
+                if (!$signup_check_results) {
+                    echo $mysqli->error;
+                    $mysqli->close();
+                    exit();
+                }
+                else if ($signup_check_results->num_rows != 0)
+                {
+                    $error = "Email is already in use. If this is you, please log in instead. Otherwise, use a different email.";
+                }
+                else
+                {
+                    $fname = $_POST['fname'];
+                    $lname = $_POST['lname'];
+                    $signup_query = "INSERT INTO users (fname, lname, email, password)
+                        VALUES ('$fname', '$lname', '$email', '$password');";	
+
+
+                    $signup_result = $mysqli->query($signup_query);
+
+                    if (!$signup_result) {
+                        echo $mysqli->error;
+                        $mysqli->close();
+                        exit();
+                    }
+                    else {
+                        $_SESSION['logged_in'] = true;
+                        $_SESSION['email'] = $_POST['email'];
+                        $_SESSION['fname'] = $fname;
+                        header('Location: home.php');
+                    }
+                }
+            }
+
+            if ($mysqli->ping()) {
+                // Connection is open, so close it
+                $mysqli->close();
+            }
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,20 +129,30 @@
                             <label class="btn btn-outline-primary" for="login">Login</label>
                             <input type="radio" class="btn-check" name="state" value="signup" id="signup">
                             <label class="btn btn-outline-success" for="signup">Signup</label>
+                            <?php if (isset($error) && trim($error) != '' ) : ?>
+                                <div class="text-danger font-italic my-3" id="login-error">
+                                    <?php echo $error; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                        <?php if (isset($error) && trim($error) != '' ) : ?>
-                            <div class="text-danger font-italic mb-3">
-                                <?php echo $error; ?>
+                        <div class="row">
+                            <div class="mb-3 hidden-toggle hidden col-6" id="fname-div">
+                                <label for="fname" class="form-label">First Name</label>
+                                <input type="test" name="fname" class="form-control" id="fname" placeholder="First Name">
                             </div>
-                        <?php endif; ?>
+                            <div class="mb-3 hidden-toggle hidden col-6" id="lname-div">
+                                <label for="lname" class="form-label">Last Name</label>
+                                <input type="text" name="lname" class="form-control" id="lname" placeholder="Last Name">
+                            </div>
+                        </div>
                         <div class="mb-3 hidden-toggle hidden">
                             <label for="email" class="form-label">Email address</label>
-                            <input type="email" name="email" class="form-control" id="email" placeholder="">
+                            <input type="email" name="email" class="form-control" id="email" placeholder="" required>
                         </div>
                         <div class="mb-3 hidden-toggle hidden">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" name="password" id="password" class="form-control"
-                                aria-describedby="passwordHelp">
+                                aria-describedby="passwordHelp" required>
                             <div class="hidden-toggle hidden form-text" id="passwordHelp">
                             </div>
                         </div>
@@ -86,12 +174,14 @@
             loginRadio.addEventListener('change', function () {
                 if (this.checked) {
                     login();
+                    document.getElementById("login-error").classList.add("hidden");
                 }
             });
 
             signupRadio.addEventListener('change', function () {
                 if (this.checked) {
                     signUp();
+                    document.getElementById("login-error").classList.add("hidden");
                 }
             });
         });
@@ -101,6 +191,14 @@
             for (let i = 0; i < hiddenElements.length; i++) {
                 hiddenElements[i].classList.remove('hidden');
             }
+            let fnameLabel = document.getElementById('fname-div');
+            fnameLabel.classList.add("hidden");
+            let lnameLabel = document.getElementById('lname-div');
+            lnameLabel.classList.add("hidden");
+            let fname = document.getElementById('fname');
+            fname.required = false;
+            let lname = document.getElementById('lname');
+            lname.required = false;
             let emailLabel = document.getElementById('email');
             emailLabel.placeholder = "";
             let submitButton = document.getElementById('submit-button');
@@ -114,6 +212,14 @@
             for (let i = 0; i < hiddenElements.length; i++) {
                 hiddenElements[i].classList.remove('hidden');
             }
+            let fnameLabel = document.getElementById('fname-div');
+            fnameLabel.classList.remove("hidden");
+            let fname = document.getElementById('fname');
+            fname.required = true;
+            let lname = document.getElementById('lname');
+            lname.required = true;
+            let lnameLabel = document.getElementById('lname-div');
+            lnameLabel.classList.remove("hidden");
             let emailLabel = document.getElementById('email');
             emailLabel.placeholder = "name@example.com";
             let submitButton = document.getElementById('submit-button');

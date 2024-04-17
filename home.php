@@ -16,6 +16,13 @@
 	<div id="page">
 		<?php include "include-require/nav.php" ?>
 		<div class="container" id="search-form">
+			<div class="row justify-content-center text-center">
+				<?php if (isset($_SESSION['fname']) && trim($_SESSION['fname']) != '' ) : ?>
+					<h2>
+						Welcome, <?php echo $_SESSION['fname']; ?>.
+					</h2>
+                <?php endif; ?>
+			</div>
 			<div class="row justify-content-center">
 				<img id="home-img" src="homepage.jpg" alt="Home Page">
 			</div>
@@ -131,15 +138,6 @@
 		$(document).ready(function () {
 			//initMap();
 			$('#map').hide();
-
-			// TODO: Update navbar based on login
-			/*if (sessionStorage.getItem('loggedIn') != 'true') {
-				$('#navbar-links').children(':not(#in, #home)').hide();
-				$('#navbar-links').children('#in').show();
-			} else {
-				$('#navbar-links').children('#in').hide();
-				$('#navbar-links').children(':not(#in)').show();
-			}*/
 		});
 	</script>
 	<?php include "include-require/bootstrap.html" ?>
