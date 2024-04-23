@@ -1130,6 +1130,16 @@ session_start();
             for (let k = 0; k < restaurantContainers.length; k++) {
                 restaurantContainers[k].classList.add("hover");
             }
+
+            // Adds restaurants to database
+            $.ajax({
+                type: "POST",
+                url: "add-restaurants.php",
+                data: { restaurants: JSON.stringify(restaurants) },
+                success: function (response) {
+                    console.log(response);
+                }
+            });
         }
 
         // Changes alert based on whether it was successful
