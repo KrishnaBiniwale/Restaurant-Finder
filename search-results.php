@@ -1,6 +1,6 @@
 <?php
-    require "config/config.php";
-    session_start();
+require "config/config.php";
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -970,14 +970,12 @@
 
         $(document).ready(function () {
             let params = getURLParams();
-            //console.log(params);
             // Base URL of the search endpoint
-            /*let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
+            let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
 
             // Construct the query URL using object literals and template literals
             let queryURL = `${baseURL}?${Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&')}`;
             let apiKey = "KsGd36gXbL3rlu3rd-ivS-Tlev_TS4iilgg1DmoGmIYEyEAJYJiVlfH9U6NAxHdTPmS6TdaFk3Wd_dOSLV5QnIpwuG2NyiNngMPHETdidSLzw2TyCL_QKRqc5_Q6ZXYx";
-            //console.log(queryURL);
             fetch(queryURL, {
                 method: "GET",
                 headers: {
@@ -988,26 +986,18 @@
                 }
             })
                 .then(response => {
-                    //console.log(queryURL);
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
                 .then(result => {
-                    //removeAll();
-                    //console.log(result);
+                    document.getElementById('search-term').innerHTML = params['restaurant-name'];
                     displayRestaurants(result);
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
                 });
-
-            //removeAll();
-            //console.log(result);
-            */
-            displayRestaurants(temp);
-            document.getElementById('search-term').innerHTML = params['restaurant-name'];
         });
 
         function displayRestaurants(result) {
@@ -1024,6 +1014,15 @@
                 restaurants = [];
                 restaurants[0] = result;
             }
+
+            // Adds restaurants to database
+            $.ajax({
+                type: "POST",
+                url: "add-restaurants.php",
+                data: { restaurants: JSON.stringify(restaurants) },
+                success: function (response) {
+                }
+            });
 
             for (let j = 0; j < restaurants.length; j++) {
                 let restaurant = restaurants[j];
@@ -1082,14 +1081,29 @@
 
                 let addToFavoritesWrapper = document.createElement("div");
                 addToFavoritesWrapper.classList.add("hidden", "add-to-favorites");
+                let alert = document.createElement("div");
+                alert.classList.add("alert", "alert-primary", "hidden", "mt-4");
+                alert.role = "alert";
                 let addToFavoritesButton = document.createElement("button");
                 addToFavoritesButton.classList.add("btn", "btn-success", "btn-lg", "col-12");
                 addToFavoritesButton.innerHTML = "Add to Favorites";
-                addToFavoritesButton.href = "favorites.html";
+                addToFavoritesButton.href = "favorites.php";
                 addToFavoritesButton.addEventListener('click', function () {
-                    window.location.href = 'favorites.html';
+                    event.stopPropagation();
+                    event.preventDefault();
+                    $.ajax({
+                        type: "POST",
+                        url: "add-favorite.php",
+                        data: { yelp_id: restaurant["id"] },
+                        success: function (response) {
+                            let result = JSON.parse(response);
+                            alert.innerHTML = result['message'];
+                            changeAlert(alert, result['code']);
+                        }
+                    });
                 });
                 addToFavoritesWrapper.appendChild(addToFavoritesButton);
+                addToFavoritesWrapper.appendChild(alert);
 
                 let restaurantInfo = document.createElement("div");
                 restaurantInfo.classList.add("row", "pb-4");
@@ -1118,6 +1132,26 @@
             }
         }
 
+        // Changes alert based on whether it was successful
+        function changeAlert(alert, code) {
+            if (code == 0) {
+                alert.classList.add("alert-primary");
+                alert.classList.remove("alert-warning");
+                alert.classList.remove("alert-danger");
+            }
+            else if (code == 1) {
+                alert.classList.remove("alert-primary");
+                alert.classList.add("alert-warning");
+                alert.classList.remove("alert-danger");
+            }
+            else {
+                alert.classList.remove("alert-primary");
+                alert.classList.remove("alert-warning");
+                alert.classList.add("alert-danger");
+            }
+            alert.classList.remove("hidden");
+        }
+
         // Expands and retracts additional restaurant information
         function expandInfo(restaurantContainer, restaurant) {
 
@@ -1144,6 +1178,7 @@
                 restaurantName.classList.add("col-lg-6");
             }
             else {
+                restaurantContainer.querySelector("div.alert").classList.add("hidden");
                 restaurantContainer.classList.remove("col-lg-11", "expanded");
                 leftCol.classList.add("col-lg-7");
                 leftCol.classList.remove("col-lg-3");
@@ -1190,7 +1225,6 @@
             let newItemTop = restaurantContainer.getBoundingClientRect().top;
             let newItemBottom = restaurantContainer.getBoundingClientRect().bottom;
             if (newItemTop < 0) {
-                console.log(newItemTop + window.pageYOffset);
                 window.scrollTo({
                     top: newItemTop + window.pageYOffset,
                     left: 0,
