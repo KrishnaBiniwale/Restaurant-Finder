@@ -1,6 +1,6 @@
 <?php
-    require "config/config.php";
-    session_start();
+require "config/config.php";
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -970,9 +970,8 @@
 
         $(document).ready(function () {
             let params = getURLParams();
-            //console.log(params);
             // Base URL of the search endpoint
-            /*let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
+            let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
 
             // Construct the query URL using object literals and template literals
             let queryURL = `${baseURL}?${Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&')}`;
@@ -988,26 +987,18 @@
                 }
             })
                 .then(response => {
-                    //console.log(queryURL);
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
                 .then(result => {
-                    //removeAll();
-                    //console.log(result);
+                    document.getElementById('search-term').innerHTML = params['restaurant-name'];
                     displayRestaurants(result);
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
                 });
-
-            //removeAll();
-            //console.log(result);
-            */
-            displayRestaurants(temp);
-            document.getElementById('search-term').innerHTML = params['restaurant-name'];
         });
 
         function displayRestaurants(result) {
@@ -1116,6 +1107,16 @@
             for (let k = 0; k < restaurantContainers.length; k++) {
                 restaurantContainers[k].classList.add("hover");
             }
+
+            // Adds restaurants to database
+            $.ajax({
+                type: "POST",
+                url: "add-restaurants.php",
+                data: { restaurants: JSON.stringify(restaurants) },
+                success: function (response) {
+                    console.log(response);
+                }
+            });
         }
 
         // Expands and retracts additional restaurant information

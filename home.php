@@ -1,6 +1,6 @@
 <?php
-    require "config/config.php";
-	session_start();
+require "config/config.php";
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,11 +17,11 @@
 		<?php include "include-require/nav.php" ?>
 		<div class="container" id="search-form">
 			<div class="row justify-content-center text-center">
-				<?php if (isset($_SESSION['fname']) && trim($_SESSION['fname']) != '' ) : ?>
+				<?php if (isset($_SESSION['fname']) && trim($_SESSION['fname']) != ''): ?>
 					<h2>
 						Welcome, <?php echo $_SESSION['fname']; ?>.
 					</h2>
-                <?php endif; ?>
+				<?php endif; ?>
 			</div>
 			<div class="row justify-content-center">
 				<img id="home-img" src="homepage.jpg" alt="Home Page">
@@ -136,7 +136,7 @@
 
 	<script>
 		$(document).ready(function () {
-			//initMap();
+			initMap();
 			$('#map').hide();
 		});
 	</script>
