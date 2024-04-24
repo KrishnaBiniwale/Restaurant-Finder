@@ -4,24 +4,15 @@ session_start();
 
 // Is this user already logged in?
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
-    // User is already logged in. Redirect to homepage.
-    //header('Location: home.php');
     session_destroy();
 } else {
-
     // Login POST
     if (isset($_POST['state'])) {
 
         // Searches DB based on credentials
         $email = $_POST['email'];
         $password = $_POST['password'];
-        $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        if ($mysqli->connect_errno) {
-            echo $mysqli->connect_error;
-            exit();
-        }
-
-        $mysqli->set_charset('utf8');
+        require "config/dbconnect.php";
 
         // Handles Login Functionality
         if ($_POST['state'] == 'login' && isset($email) && isset($password)) {

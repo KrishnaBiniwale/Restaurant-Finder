@@ -1,6 +1,16 @@
 <?php
-    require "config/config.php";
-    session_start();
+require "config/config.php";
+session_start();
+
+// If not user logged in, redirect to login
+if (!isset($_SESSION["user_id"])) {
+    header('Location: login.php');
+} else {
+    // Else, GET from favorites and display
+    require "config/dbconnect.php";
+    $user = $_SESSION['user_id'];
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
