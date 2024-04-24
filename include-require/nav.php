@@ -10,18 +10,21 @@
                                 <a class="nav-link fs-5" aria-current="page" href="home.php">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link fs-5" href="favorites.php">Favorites</a>
+                                <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+                                    <a class="nav-link fs-5" href="search-results.php"
+                                        onclick="<?php $_SESSION['favorites'] = true; ?>">Favorites</a>
+                                <?php endif; ?>
                             </li>
                         </ul>
                     </div>
-                     <div class="navbar col-3 justify-content-end" id="loginNavbar">
+                    <div class="navbar col-3 justify-content-end" id="loginNavbar">
 
-                        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) : ?>
+                        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
                             <a class="nav-link fs-5 me-4" href="logout.php">Logout</a>
                         <?php else: ?>
                             <a class="nav-link fs-5 me-4" href="login.php">Login / Signup</a>
                         <?php endif; ?>
-                        
+
                     </div>
                 </div>
             </nav>

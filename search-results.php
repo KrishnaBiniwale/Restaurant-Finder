@@ -17,9 +17,11 @@ session_start();
             <div class="row justify-content-center" id="search-results">
 
                 <div class="row text-center" id="results">
-                    <p class="fs-5" id="results-p"><em>Showing <strong><span id="numResults">0</span></strong> of
-                            <strong><span id="totalResults">0</span></strong>
-                            result(s) for "<span id="search-term"></span>"</em></p>
+                    <?php if (!isset($_SESSION["favorites"]) || $_SESSION["favorites"] == false): ?>
+                        <p class="fs-5" id="results-p"><em>Showing <strong><span id="numResults">0</span></strong> of
+                                <strong><span id="totalResults">0</span></strong>
+                                result(s) for "<span id="search-term"></span>"</em></p>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -968,36 +970,51 @@ session_start();
             return params;
         }
 
-        $(document).ready(function () {
-            let params = getURLParams();
-            // Base URL of the search endpoint
-            let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
-
-            // Construct the query URL using object literals and template literals
-            let queryURL = `${baseURL}?${Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&')}`;
-            let apiKey = "KsGd36gXbL3rlu3rd-ivS-Tlev_TS4iilgg1DmoGmIYEyEAJYJiVlfH9U6NAxHdTPmS6TdaFk3Wd_dOSLV5QnIpwuG2NyiNngMPHETdidSLzw2TyCL_QKRqc5_Q6ZXYx";
-            fetch(queryURL, {
-                method: "GET",
-                headers: {
-                    "accept": "application/json",
-                    "x-requested-with": "xmlhttprequest",
-                    "Access-Control-Allow-Origin": "*",
-                    "Authorization": `Bearer ${apiKey}`
+        function displayFavorites() {
+            $.ajax({
+                type: "POST",
+                url: "get-favorites.php",
+                success: function (response) {
+                    let restaurants = JSON.parse(response);
+                    displayRestaurants(restaurants);
                 }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+            });
+        }
+
+        $(document).ready(function () {
+            <?php if ($_SESSION['favorites'] == true): ?>
+                displayFavorites();
+            <?php else: ?>
+                let params = getURLParams();
+                // Base URL of the search endpoint
+                let baseURL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search";
+
+                // Construct the query URL using object literals and template literals
+                let queryURL = `${baseURL}?${Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&')}`;
+                let apiKey = "KsGd36gXbL3rlu3rd-ivS-Tlev_TS4iilgg1DmoGmIYEyEAJYJiVlfH9U6NAxHdTPmS6TdaFk3Wd_dOSLV5QnIpwuG2NyiNngMPHETdidSLzw2TyCL_QKRqc5_Q6ZXYx";
+                fetch(queryURL, {
+                    method: "GET",
+                    headers: {
+                        "accept": "application/json",
+                        "x-requested-with": "xmlhttprequest",
+                        "Access-Control-Allow-Origin": "*",
+                        "Authorization": `Bearer ${apiKey}`
                     }
-                    return response.json();
                 })
-                .then(result => {
-                    document.getElementById('search-term').innerHTML = params['restaurant-name'];
-                    displayRestaurants(result);
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        document.getElementById('search-term').innerHTML = params['restaurant-name'];
+                        displayRestaurants(result);
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+            <?php endif; ?>
         });
 
         function displayRestaurants(result) {
@@ -1026,6 +1043,10 @@ session_start();
 
             for (let j = 0; j < restaurants.length; j++) {
                 let restaurant = restaurants[j];
+                if (restaurant["restaurant_name"]) {
+                    restaurant["name"] = restaurant["restaurant_name"];
+                    delete restaurant["restaurant_name"];
+                }
                 let restaurantContainer = document.createElement("div");
                 restaurantContainer.classList.add("container", "col-lg-5", "col-lg-offset-1", "col-12", "restaurant", "border", "border-1", "border-dark-subtle", "rounded-5", "my-4");
                 let leftCol = document.createElement("div");
@@ -1074,6 +1095,10 @@ session_start();
                 let categories = document.createElement("h5");
                 categories.classList.add("normal");
                 for (let i = 0; i < restaurant['categories'].length; i++) {
+                    if (restaurant['categories'][i]['category_name']) {
+                        restaurant['categories'][i]['title'] = restaurant['categories'][i]['category_name'];
+                        delete restaurant['categories'][i]['category_name'];
+                    }
                     categories.innerHTML += restaurant['categories'][i]['title'] + ", ";
                 }
                 categories.innerHTML = categories.innerHTML.slice(0, -2);
@@ -1120,12 +1145,14 @@ session_start();
             }
 
             // Displays # of results and shows/hides appropriate information
-            let resultsP = document.getElementById("results-p");
-            let navigation = document.getElementById("navigation");
-            let numResults = document.getElementById("numResults");
-            numResults.innerHTML = restaurants.length;
-            let totalResults = document.getElementById("totalResults");
-            totalResults.innerHTML = result['total'];
+            <?php if (!isset($_SESSION['favorites']) || $_SESSION['favorites'] == false): ?>
+                let resultsP = document.getElementById("results-p");
+                let navigation = document.getElementById("navigation");
+                let numResults = document.getElementById("numResults");
+                numResults.innerHTML = restaurants.length;
+                let totalResults = document.getElementById("totalResults");
+                totalResults.innerHTML = result['total'];
+            <?php endif; ?>
             let restaurantContainers = document.querySelectorAll('.restaurant');
             for (let k = 0; k < restaurantContainers.length; k++) {
                 restaurantContainers[k].classList.add("hover");
@@ -1137,7 +1164,6 @@ session_start();
                 url: "add-restaurants.php",
                 data: { restaurants: JSON.stringify(restaurants) },
                 success: function (response) {
-                    console.log(response);
                 }
             });
         }

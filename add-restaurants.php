@@ -4,13 +4,7 @@ session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['restaurants'])) {
     $restaurants = json_decode($_POST['restaurants'], true);
-    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    if ($mysqli->connect_errno) {
-        echo $mysqli->connect_error;
-        exit();
-    }
-
-    $mysqli->set_charset('utf8');
+    require "config/dbconnect.php";
     foreach ($restaurants as $restaurant) {
 
         $yelp_id = $restaurant['id'];

@@ -3,12 +3,7 @@ require "config/config.php";
 session_start();
 
 if (isset($_SESSION['user_id']) && isset($_POST['yelp_id'])) {
-    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    if ($mysqli->connect_errno) {
-        echo $mysqli->connect_error;
-        exit();
-    }
-    $mysqli->set_charset('utf8');
+    require "config/dbconnect.php";
     $user_id = $_SESSION['user_id'];
     $yelp_id = $_POST['yelp_id'];
 
