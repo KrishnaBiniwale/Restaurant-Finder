@@ -5,4 +5,4 @@ Furthermore, users can select restaurants as favorites, which are saved based on
 
 # Backend
 This website utilizes the Yelp API to obtain the restaurant locations, as well as various information about each restaurant.
-Additionally, the Google Maps API is used to create a Google Maps instance that users can select to find their location.
+Additionally, the Google Maps API is also used to create a Google Maps instance that users can select to find their location.
