@@ -17,7 +17,7 @@ session_start();
             <div class="row justify-content-center" id="search-results">
 
                 <div class="row text-center" id="results">
-                    <?php if (!isset($_SESSION["favorites"]) || $_SESSION["favorites"] == false): ?>
+                    <?php if (!isset($_SESSION["favorites"]) || $_SESSION["favorites"] === "false"): ?>
                         <p class="fs-5" id="results-p"><em>Showing <strong><span id="numResults">0</span></strong> of
                                 <strong><span id="totalResults">0</span></strong>
                                 result(s) for "<span id="search-term"></span>"</em></p>
@@ -982,7 +982,7 @@ session_start();
         }
 
         $(document).ready(function () {
-            <?php if ($_SESSION['favorites'] == true): ?>
+            <?php if ($_SESSION['favorites'] === "true"): ?>
                 displayFavorites();
             <?php else: ?>
                 let params = getURLParams();
@@ -1012,10 +1012,12 @@ session_start();
                         displayRestaurants(result);
                     })
                     .catch(error => {
-                        console.error('There was a problem with the fetch operation:', error);
+                        window.open("https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search");
+                        alert("Return to Home to Search");
                     });
             <?php endif; ?>
         });
+
 
         function displayRestaurants(result) {
             removeAll();
@@ -1024,7 +1026,7 @@ session_start();
             if (result['businesses']) {
                 restaurants = result["businesses"];
             }
-            else if (result.length > 1) {
+            else if (Array.isArray(result)) {
                 restaurants = result;
             }
             else {
@@ -1033,17 +1035,20 @@ session_start();
             }
 
             // Adds restaurants to database
-            $.ajax({
-                type: "POST",
-                url: "add-restaurants.php",
-                data: { restaurants: JSON.stringify(restaurants) },
-                success: function (response) {
-                }
-            });
-
+            <?php if (!isset($_SESSION['favorites']) || $_SESSION['favorites'] === "false"): ?>
+                $.ajax({
+                    type: "POST",
+                    url: "add-restaurants.php",
+                    data: { restaurants: JSON.stringify(restaurants) },
+                    success: function (response) {
+                    }
+                });
+            <?php endif; ?>
             for (let j = 0; j < restaurants.length; j++) {
                 let restaurant = restaurants[j];
-                if (restaurant["restaurant_name"]) {
+                if (restaurant["yelp_id"]) {
+                    restaurant["id"] = restaurant["yelp_id"];
+                    delete restaurant["yelp_id"];
                     restaurant["name"] = restaurant["restaurant_name"];
                     delete restaurant["restaurant_name"];
                 }
@@ -1111,6 +1116,20 @@ session_start();
                 alert.role = "alert";
                 let addToFavoritesButton = document.createElement("button");
                 addToFavoritesButton.classList.add("btn", "btn-success", "btn-lg", "col-12");
+                //console.log(restaurant);
+                $.ajax({
+                    type: "POST",
+                    url: "add-favorite.php",
+                    data: { yelp_id: restaurant["id"], add: false },
+                    success: function (response) {
+                        let result = JSON.parse(response);
+                        if (result['code'] == 0) {
+                            addToFavoritesButton.innerHTML = "Add to Favorites";
+                        } else {
+                            addToFavoritesButton.innerHTML = "Remove From Favorites";
+                        }
+                    }
+                });
                 addToFavoritesButton.innerHTML = "Add to Favorites";
                 addToFavoritesButton.href = "favorites.php";
                 addToFavoritesButton.addEventListener('click', function () {
@@ -1119,7 +1138,7 @@ session_start();
                     $.ajax({
                         type: "POST",
                         url: "add-favorite.php",
-                        data: { yelp_id: restaurant["id"] },
+                        data: { yelp_id: restaurant["id"], add: true },
                         success: function (response) {
                             let result = JSON.parse(response);
                             alert.innerHTML = result['message'];
@@ -1145,7 +1164,7 @@ session_start();
             }
 
             // Displays # of results and shows/hides appropriate information
-            <?php if (!isset($_SESSION['favorites']) || $_SESSION['favorites'] == false): ?>
+            <?php if (!isset($_SESSION['favorites']) || $_SESSION['favorites'] === "false"): ?>
                 let resultsP = document.getElementById("results-p");
                 let navigation = document.getElementById("navigation");
                 let numResults = document.getElementById("numResults");
@@ -1157,30 +1176,21 @@ session_start();
             for (let k = 0; k < restaurantContainers.length; k++) {
                 restaurantContainers[k].classList.add("hover");
             }
-
-            // Adds restaurants to database
-            $.ajax({
-                type: "POST",
-                url: "add-restaurants.php",
-                data: { restaurants: JSON.stringify(restaurants) },
-                success: function (response) {
-                }
-            });
         }
 
         // Changes alert based on whether it was successful
         function changeAlert(alert, code) {
-            if (code == 0) {
+            if (code == 1) {
                 alert.classList.add("alert-primary");
                 alert.classList.remove("alert-warning");
                 alert.classList.remove("alert-danger");
             }
-            else if (code == 1) {
+            else if (code == 2) {
                 alert.classList.remove("alert-primary");
                 alert.classList.add("alert-warning");
                 alert.classList.remove("alert-danger");
             }
-            else {
+            else if (code == 3 || code == 4) {
                 alert.classList.remove("alert-primary");
                 alert.classList.remove("alert-warning");
                 alert.classList.add("alert-danger");

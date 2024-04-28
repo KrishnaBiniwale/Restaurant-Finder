@@ -59,8 +59,7 @@ session_start();
 							<label for="restaurant-name" class="ms-3">Restaurant Name</label>
 						</div>
 						<div class="col-2 my-auto">
-							<button type="submit" onclick="<?php $_SESSION['favorites'] = false; ?>"
-								class="btn btn-lg btn-success px-4"><i
+							<button type="submit" onclick="resetFavorites()" class="btn btn-lg btn-success px-4"><i
 									class="fa-solid fa-magnifying-glass"></i></button>
 						</div>
 					</div>
@@ -127,6 +126,17 @@ session_start();
 				document.getElementById('page').classList.remove("dim");
 				document.getElementById('latitude').value = latlong['lat'];
 				document.getElementById('longitude').value = latlong['lng'];
+			});
+		}
+
+		function resetFavorites() {
+			$.ajax({
+				type: "POST",
+				url: "set-favorites-session.php",
+				data: { favorites: false },
+				success: function (response) {
+					console.log("Changed to not favorites.");
+				}
 			});
 		}
 	</script>

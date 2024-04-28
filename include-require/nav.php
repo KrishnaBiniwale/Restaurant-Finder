@@ -12,7 +12,7 @@
                             <li class="nav-item">
                                 <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
                                     <a class="nav-link fs-5" href="search-results.php"
-                                        onclick="<?php $_SESSION['favorites'] = true; ?>">Favorites</a>
+                                        onclick="setFavorites()">Favorites</a>
                                 <?php endif; ?>
                             </li>
                         </ul>
@@ -31,3 +31,15 @@
         </div>
     </div>
 </div>
+<script>
+    function setFavorites() {
+        $.ajax({
+            type: "POST",
+            url: "set-favorites-session.php",
+            data: { favorites: true },
+            success: function (response) {
+                console.log("Changed to favorites.");
+            }
+        });
+    }
+</script>
