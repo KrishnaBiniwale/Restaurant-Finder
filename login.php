@@ -42,40 +42,46 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
         }
         // Handles Signup Functionality
         else if ($_POST['state'] == 'signup' && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['fname']) && isset($_POST['lname'])) {
-            $signup_check = "SELECT fname, lname, email, password
+            $pattern = '/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/';
+
+            if (preg_match($pattern, $password)) {
+                $signup_check = "SELECT fname, lname, email, password
                     FROM users
                     WHERE email = '$email'";
 
 
 
-            $signup_check_results = $mysqli->query($signup_check);
+                $signup_check_results = $mysqli->query($signup_check);
 
-            if (!$signup_check_results) {
-                echo $mysqli->error;
-                $mysqli->close();
-                exit();
-            } else if ($signup_check_results->num_rows != 0) {
-                $error = "Email is already in use. If this is you, please log in instead. Otherwise, use a different email.";
-            } else {
-                $fname = $_POST['fname'];
-                $lname = $_POST['lname'];
-                $signup_query = "INSERT INTO users (fname, lname, email, password)
-                        VALUES ('$fname', '$lname', '$email', '$password');";
-
-
-                $signup_result = $mysqli->query($signup_query);
-
-                if (!$signup_result) {
+                if (!$signup_check_results) {
                     echo $mysqli->error;
                     $mysqli->close();
                     exit();
+                } else if ($signup_check_results->num_rows != 0) {
+                    $error = "Email is already in use. If this is you, please log in instead. Otherwise, use a different email.";
                 } else {
-                    $_SESSION['logged_in'] = true;
-                    $_SESSION['email'] = $_POST['email'];
-                    $_SESSION['fname'] = $fname;
-                    $_SESSION['user_id'] = $mysqli->insert_id;
-                    header('Location: home.php');
+                    $fname = $_POST['fname'];
+                    $lname = $_POST['lname'];
+                    $signup_query = "INSERT INTO users (fname, lname, email, password)
+                        VALUES ('$fname', '$lname', '$email', '$password');";
+
+
+                    $signup_result = $mysqli->query($signup_query);
+
+                    if (!$signup_result) {
+                        echo $mysqli->error;
+                        $mysqli->close();
+                        exit();
+                    } else {
+                        $_SESSION['logged_in'] = true;
+                        $_SESSION['email'] = $_POST['email'];
+                        $_SESSION['fname'] = $fname;
+                        $_SESSION['user_id'] = $mysqli->insert_id;
+                        header('Location: home.php');
+                    }
                 }
+            } else {
+                $error = 'Password is invalid.';
             }
         }
 
@@ -92,6 +98,8 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
 <head>
     <title>Restaurant Finder | Login</title>
     <?php include "include-require/head.html" ?>
+    <meta name="description"
+        content="The login page allows for users to log in. Logged in users are able to save their favorite restaurants in a list, and update that list in the favorites section under the navbar.">
 </head>
 
 <body>
@@ -119,7 +127,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
                         <div class="row">
                             <div class="mb-3 hidden-toggle hidden col-6" id="fname-div">
                                 <label for="fname" class="form-label">First Name</label>
-                                <input type="test" name="fname" class="form-control" id="fname"
+                                <input type="text" name="fname" class="form-control" id="fname"
                                     placeholder="First Name">
                             </div>
                             <div class="mb-3 hidden-toggle hidden col-6" id="lname-div">

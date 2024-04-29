@@ -11,18 +11,18 @@
                             </li>
                             <li class="nav-item">
                                 <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-                                    <a class="nav-link fs-5" href="search-results.php"
+                                    <a class="nav-link fs-5" href="search-results.php" id="favoritesNavbar"
                                         onclick="setFavorites()">Favorites</a>
                                 <?php endif; ?>
                             </li>
                         </ul>
                     </div>
-                    <div class="navbar col-3 justify-content-end" id="loginNavbar">
+                    <div class="navbar col-3 justify-content-end">
 
                         <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-                            <a class="nav-link fs-5 me-4" href="logout.php">Logout</a>
+                            <a class="nav-link fs-5 me-4" href="logout.php" id="loginNavbar">Logout</a>
                         <?php else: ?>
-                            <a class="nav-link fs-5 me-4" href="login.php">Login / Signup</a>
+                            <a class="nav-link fs-5 me-4" href="login.php" id="loginNavbar">Login / Signup</a>
                         <?php endif; ?>
 
                     </div>
@@ -38,7 +38,6 @@
             url: "set-favorites-session.php",
             data: { favorites: true },
             success: function (response) {
-                console.log("Changed to favorites.");
             }
         });
     }

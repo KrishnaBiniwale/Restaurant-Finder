@@ -61,3 +61,8 @@ img {
     filter: brightness(90%);
     opacity: 0.95;
 }
+
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+}

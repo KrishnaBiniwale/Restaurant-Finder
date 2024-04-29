@@ -1,6 +1,6 @@
 <?php
-    session_start();
-	session_destroy();
+session_start();
+session_destroy();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,9 +8,8 @@
 <head>
     <title>Restaurant Finder | Logout</title>
     <?php include "include-require/head.html" ?>
-    <style>
-
-    </style>
+    <meta name="description"
+        content="The logout page firsts displays confirmation of logout. Then, it resets the user session and lets them go back to the home page.">
 </head>
 
 <body>
@@ -25,6 +24,8 @@
 
     <script>
         $(document).ready(function () {
+            document.getElementById("loginNavbar").classList.add("hidden");
+            document.getElementById("favoritesNavbar").classList.add("hidden");
         });
 
     </script>

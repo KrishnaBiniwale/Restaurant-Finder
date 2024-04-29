@@ -9,7 +9,6 @@ if (!isset($_SESSION["user_id"])) {
     // Else, GET from favorites and display
     require "config/dbconnect.php";
     $user_id = $_SESSION['user_id'];
-
     $favoritesQuery = "SELECT restaurants.* FROM favorites LEFT JOIN restaurants on favorites.restaurant_id = restaurants.restaurant_id WHERE favorites.user_id = $user_id;";
     $favoritesResult = $mysqli->query($favoritesQuery);
     if ($favoritesResult === false) {
