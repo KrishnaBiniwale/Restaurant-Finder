@@ -34,18 +34,18 @@ session_start();
 					<div class="row">
 						<div class="col-12 col-lg-4 mb-2 d-flex justify-content-center pt-2">
 
-							<input type="radio" class="btn-check" name="search-parameter" value="best-match"
+							<input type="radio" class="btn-check" name="sort_by" value="best_match"
 								id="best-match" checked>
 							<label class="btn btn-outline-danger me-2" for="best-match">Best Match</label>
 
-							<input type="radio" class="btn-check" name="search-parameter" value="rating" id="rating">
+							<input type="radio" class="btn-check" name="sort_by" value="rating" id="rating">
 							<label class="btn btn-outline-danger me-2" for="rating">Rating</label>
 
-							<input type="radio" class="btn-check" name="search-parameter" value="review-count"
+							<input type="radio" class="btn-check" name="sort_by" value="review_count"
 								id="review-count">
-							<label class="btn btn-outline-danger me-2" for="review-count">Review Count</label>
+							<label class="btn btn-outline-danger me-2" for="review_count">Review Count</label>
 
-							<input type="radio" class="btn-check" name="search-parameter" value="distance"
+							<input type="radio" class="btn-check" name="sort_by" value="distance"
 								id="distance">
 							<label class="btn btn-outline-danger" for="distance">Distance</label>
 						</div>
