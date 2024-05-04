@@ -1,5 +1,5 @@
 # RestaurantFinder
-Website that acts as a yelp-helper to find a restaurant that the user searches for.
+Website that acts as a Yelp-helper to find a restaurant that the user searches for.
 
 # Frontend
 Users can search for name and location, and sort by metrics such as best match, best rating, review count, and distance.
