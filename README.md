@@ -2,7 +2,7 @@
 Website that acts as a Yelp-helper to find a restaurant that the user searches for.
 
 # Frontend
-Users can search for name and location, and sort by metrics such as best match, best rating, review count, and distance.
+Users can search for name and location, and sort by metrics such as best match, rating, review count, and distance.
 Furthermore, users can select restaurants as favorites, which are saved based on their login.
 
 # Backend
