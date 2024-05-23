@@ -9,3 +9,6 @@ Furthermore, users can select restaurants as favorites, which are saved based on
 This website utilizes the Yelp API to obtain the restaurant locations, as well as various information about each restaurant.
 Additionally, the Google Maps API is also used to create a instance of a Google Maps that users can select to find their location.
 The information about users, such as their login information, as well as the information about restaurants is stored in an SQL database in PHPmyAdmin.
+
+# Edit
+Currently switching frameworks, so this site will be temporarily down.
