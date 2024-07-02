@@ -11,4 +11,4 @@ Additionally, the Google Maps API is also used to create a instance of a Google 
 The information about users, such as their login information, as well as the information about restaurants is stored in an SQL database in PHPmyAdmin.
 
 # Edit
-Currently switching PHP frameworks, so this site will temporarily be down.
+Currently switching PHP frameworks, so this site will be temporarily down.
